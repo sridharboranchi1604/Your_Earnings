@@ -32,7 +32,7 @@ const firebaseConfig = {
 
 
 // ==========================================
-// FIREBASE
+// FIREBASE INITIALIZATION
 // ==========================================
 
 const app = initializeApp(firebaseConfig);
@@ -42,6 +42,22 @@ const database = getDatabase(app);
 const auth = getAuth(app);
 
 const numbersRef = ref(database, "numbers");
+
+
+// ==========================================
+// ORIGINAL / STARTING TOTALS
+// ==========================================
+//
+// These are your original totals.
+// They are used automatically when Firebase
+// does not yet contain person1/person2/person3.
+//
+
+const startingTotals = {
+    person1: 288588,   // Pintu
+    person2: 294863,   // Akshay
+    person3: 283965    // Raju
+};
 
 
 // ==========================================
@@ -84,13 +100,18 @@ const people = [
 
 people.forEach((person) => {
 
-    document.getElementById(
-        person.labelId
-    ).textContent = person.name;
+    const label = document.getElementById(person.labelId);
 
-    document.getElementById(
-        person.todayNameId
-    ).textContent = person.name;
+    if (label) {
+        label.textContent = person.name;
+    }
+
+    const todayName =
+        document.getElementById(person.todayNameId);
+
+    if (todayName) {
+        todayName.textContent = person.name;
+    }
 
 });
 
@@ -101,15 +122,16 @@ people.forEach((person) => {
 
 function getIndiaDateKey() {
 
-    const parts = new Intl.DateTimeFormat(
-        "en-US",
-        {
-            timeZone: "Asia/Kolkata",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit"
-        }
-    ).formatToParts(new Date());
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-US",
+            {
+                timeZone: "Asia/Kolkata",
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit"
+            }
+        ).formatToParts(new Date());
 
     const result = {};
 
@@ -134,11 +156,12 @@ function formatDate(dateKey) {
     const [year, month, day] =
         dateKey.split("-");
 
-    const date = new Date(
-        Number(year),
-        Number(month) - 1,
-        Number(day)
-    );
+    const date =
+        new Date(
+            Number(year),
+            Number(month) - 1,
+            Number(day)
+        );
 
     return date.toLocaleDateString(
         "en-IN",
@@ -157,7 +180,8 @@ function formatDate(dateKey) {
 
 function formatNumber(value) {
 
-    const number = Number(value || 0);
+    const number =
+        Number(value || 0);
 
     return number.toLocaleString(
         "en-IN",
@@ -183,11 +207,8 @@ onValue(
     numbersRef,
     (snapshot) => {
 
-        const data = snapshot.val();
-
-        if (!data) {
-            return;
-        }
+        const data =
+            snapshot.val() || {};
 
 
         // ==================================
@@ -200,15 +221,30 @@ onValue(
                 const firebaseKey =
                     `person${index + 1}`;
 
+
+                // If Firebase has a value,
+                // use it.
+                //
+                // Otherwise use original total.
+
                 const total =
-                    Number(
-                        data[firebaseKey] || 0
+                    data[firebaseKey] !== undefined
+                        ? Number(data[firebaseKey])
+                        : startingTotals[firebaseKey];
+
+
+                const element =
+                    document.getElementById(
+                        person.valueId
                     );
 
-                document.getElementById(
-                    person.valueId
-                ).textContent =
-                    formatNumber(total);
+
+                if (element) {
+
+                    element.textContent =
+                        formatNumber(total);
+
+                }
 
             }
         );
@@ -218,14 +254,19 @@ onValue(
         // LAST UPDATED
         // ==================================
 
+        const dateElement =
+            document.getElementById("date");
+
+
         if (data.lastUpdated) {
 
-            document.getElementById(
-                "date"
-            ).textContent =
-                formatDate(
-                    data.lastUpdated
-                );
+            dateElement.textContent =
+                formatDate(data.lastUpdated);
+
+        } else {
+
+            dateElement.textContent =
+                "Not updated yet";
 
         }
 
@@ -236,6 +277,7 @@ onValue(
 
         const todayKey =
             getIndiaDateKey();
+
 
         const todayData =
             data.history &&
@@ -250,17 +292,25 @@ onValue(
                     const firebaseKey =
                         `person${index + 1}`;
 
+
                     const value =
                         Number(
-                            todayData[
-                                firebaseKey
-                            ] || 0
+                            todayData[firebaseKey] || 0
                         );
 
-                    document.getElementById(
-                        person.todayValueId
-                    ).textContent =
-                        `+${formatNumber(value)}`;
+
+                    const element =
+                        document.getElementById(
+                            person.todayValueId
+                        );
+
+
+                    if (element) {
+
+                        element.textContent =
+                            `+${formatNumber(value)}`;
+
+                    }
 
                 }
             );
@@ -270,9 +320,18 @@ onValue(
             people.forEach(
                 (person) => {
 
-                    document.getElementById(
-                        person.todayValueId
-                    ).textContent = "+0";
+                    const element =
+                        document.getElementById(
+                            person.todayValueId
+                        );
+
+
+                    if (element) {
+
+                        element.textContent =
+                            "+0";
+
+                    }
 
                 }
             );
@@ -280,10 +339,22 @@ onValue(
         }
 
 
-        document.getElementById(
-            "todayDate"
-        ).textContent =
-            formatDate(todayKey);
+        // ==================================
+        // TODAY DATE
+        // ==================================
+
+        const todayDateElement =
+            document.getElementById(
+                "todayDate"
+            );
+
+
+        if (todayDateElement) {
+
+            todayDateElement.textContent =
+                formatDate(todayKey);
+
+        }
 
 
         // ==================================
@@ -310,12 +381,136 @@ onValue(
 
         updateAdminTodayStatus(data);
 
+    },
+
+    (error) => {
+
+        console.error(
+            "Firebase read error:",
+            error
+        );
+
     }
 );
 
 
 // ==========================================
 // BUILD HISTORY TABLE
+// ==========================================
+
+function buildHistory(history) {
+
+    const historyBody =
+        document.getElementById(
+            "historyBody"
+        );
+
+
+    if (!historyBody) {
+        return;
+    }
+
+
+    const dates =
+        Object.keys(history)
+            .sort(
+                (a, b) =>
+                    b.localeCompare(a)
+            );
+
+
+    // ======================================
+    // NO HISTORY
+    // ======================================
+
+    if (dates.length === 0) {
+
+        historyBody.innerHTML = `
+            <tr>
+                <td
+                    colspan="5"
+                    class="empty-history"
+                >
+                    No daily updates yet.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    // ======================================
+    // BUILD TABLE
+    // ======================================
+
+    historyBody.innerHTML = "";
+
+
+    dates.forEach(
+        (dateKey) => {
+
+            const day =
+                history[dateKey] || {};
+
+
+            const pintu =
+                Number(day.person1 || 0);
+
+
+            const akshay =
+                Number(day.person2 || 0);
+
+
+            const raju =
+                Number(day.person3 || 0);
+
+
+            const dailyTotal =
+                pintu +
+                akshay +
+                raju;
+
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${formatDate(dateKey)}
+                </td>
+
+                <td>
+                    +${formatNumber(pintu)}
+                </td>
+
+                <td>
+                    +${formatNumber(akshay)}
+                </td>
+
+                <td>
+                    +${formatNumber(raju)}
+                </td>
+
+                <td>
+                    ${formatNumber(dailyTotal)}
+                </td>
+
+            `;
+
+
+            historyBody.appendChild(row);
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// BUILD CHART
 // ==========================================
 
 function buildChart(history) {
@@ -325,20 +520,10 @@ function buildChart(history) {
             "progressChart"
         );
 
+
     if (!canvas) {
         return;
     }
-
-
-    // ======================================
-    // ORIGINAL / STARTING TOTALS
-    // ======================================
-
-    const startingPintu = 288588;
-
-    const startingAkshay = 294863;
-
-    const startingRaju = 283965;
 
 
     // ======================================
@@ -354,30 +539,37 @@ function buildChart(history) {
 
 
     // ======================================
-    // CHART DATA
+    // STARTING TOTALS
     // ======================================
 
     let pintuTotal =
-        startingPintu;
+        startingTotals.person1;
 
     let akshayTotal =
-        startingAkshay;
+        startingTotals.person2;
 
     let rajuTotal =
-        startingRaju;
+        startingTotals.person3;
 
+
+    // ======================================
+    // CHART ARRAYS
+    // ======================================
 
     const labels = [
         "Starting Total"
     ];
 
+
     const pintuData = [
         pintuTotal
     ];
 
+
     const akshayData = [
         akshayTotal
     ];
+
 
     const rajuData = [
         rajuTotal
@@ -385,14 +577,14 @@ function buildChart(history) {
 
 
     // ======================================
-    // ADD DAILY HISTORY
+    // ADD HISTORY
     // ======================================
 
     dates.forEach(
         (dateKey) => {
 
             const day =
-                history[dateKey];
+                history[dateKey] || {};
 
 
             pintuTotal +=
@@ -400,10 +592,12 @@ function buildChart(history) {
                     day.person1 || 0
                 );
 
+
             akshayTotal +=
                 Number(
                     day.person2 || 0
                 );
+
 
             rajuTotal +=
                 Number(
@@ -420,9 +614,11 @@ function buildChart(history) {
                 pintuTotal
             );
 
+
             akshayData.push(
                 akshayTotal
             );
+
 
             rajuData.push(
                 rajuTotal
@@ -512,9 +708,13 @@ function buildChart(history) {
 
                     maintainAspectRatio: false,
 
+
                     interaction: {
+
                         mode: "index",
+
                         intersect: false
+
                     },
 
 
@@ -630,30 +830,36 @@ const emailInput =
         "email"
     );
 
+
 const passwordInput =
     document.getElementById(
         "password"
     );
+
 
 const loginButton =
     document.getElementById(
         "loginButton"
     );
 
+
 const loginBox =
     document.getElementById(
         "loginBox"
     );
+
 
 const updateBox =
     document.getElementById(
         "updateBox"
     );
 
+
 const loginError =
     document.getElementById(
         "loginError"
     );
+
 
 const logoutButton =
     document.getElementById(
@@ -672,6 +878,7 @@ loginButton.addEventListener(
         const email =
             emailInput.value.trim();
 
+
         const password =
             passwordInput.value;
 
@@ -682,12 +889,17 @@ loginButton.addEventListener(
                 "Please enter email and password.";
 
             return;
+
         }
 
 
-        loginError.textContent = "";
+        loginError.textContent =
+            "";
 
-        loginButton.disabled = true;
+
+        loginButton.disabled =
+            true;
+
 
         loginButton.textContent =
             "Logging in...";
@@ -703,14 +915,20 @@ loginButton.addEventListener(
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Login error:",
+                error
+            );
+
 
             loginError.textContent =
                 "Invalid email or password.";
 
         } finally {
 
-            loginButton.disabled = false;
+            loginButton.disabled =
+                false;
+
 
             loginButton.textContent =
                 "Login";
@@ -722,7 +940,7 @@ loginButton.addEventListener(
 
 
 // ==========================================
-// ENTER KEY
+// ENTER KEY LOGIN
 // ==========================================
 
 passwordInput.addEventListener(
@@ -752,6 +970,7 @@ onAuthStateChanged(
             loginBox.style.display =
                 "none";
 
+
             updateBox.style.display =
                 "block";
 
@@ -759,6 +978,7 @@ onAuthStateChanged(
 
             loginBox.style.display =
                 "grid";
+
 
             updateBox.style.display =
                 "none";
@@ -777,7 +997,18 @@ logoutButton.addEventListener(
     "click",
     async () => {
 
-        await signOut(auth);
+        try {
+
+            await signOut(auth);
+
+        } catch (error) {
+
+            console.error(
+                "Logout error:",
+                error
+            );
+
+        }
 
     }
 );
@@ -806,10 +1037,16 @@ function updateAdminTodayStatus(data) {
             "alreadyUpdated"
         );
 
+
     const updateButton =
         document.getElementById(
             "updateButton"
         );
+
+
+    if (!message || !updateButton) {
+        return;
+    }
 
 
     if (alreadyUpdated) {
@@ -817,8 +1054,10 @@ function updateAdminTodayStatus(data) {
         message.style.display =
             "block";
 
+
         updateButton.disabled =
             true;
+
 
         updateButton.textContent =
             "Today's Numbers Already Added";
@@ -828,8 +1067,10 @@ function updateAdminTodayStatus(data) {
         message.style.display =
             "none";
 
+
         updateButton.disabled =
             false;
+
 
         updateButton.textContent =
             "➕ Add Today's Numbers";
@@ -848,27 +1089,36 @@ const updateButton =
         "updateButton"
     );
 
+
 const status =
     document.getElementById(
         "status"
     );
 
 
+// ==========================================
+// UPDATE BUTTON
+// ==========================================
+
 updateButton.addEventListener(
     "click",
     async () => {
 
-        status.textContent = "";
+        status.textContent =
+            "";
 
-        updateButton.disabled = true;
+
+        updateButton.disabled =
+            true;
+
 
         updateButton.textContent =
             "Updating...";
 
 
-        // ----------------------------------
-        // GET VALUES
-        // ----------------------------------
+        // ==================================
+        // GET INPUT VALUES
+        // ==================================
 
         const values =
             people.map(
@@ -879,6 +1129,7 @@ updateButton.addEventListener(
                             person.inputId
                         );
 
+
                     return Number(
                         input.value
                     );
@@ -887,9 +1138,9 @@ updateButton.addEventListener(
             );
 
 
-        // ----------------------------------
+        // ==================================
         // VALIDATION
-        // ----------------------------------
+        // ==================================
 
         const valid =
             values.every(
@@ -904,15 +1155,23 @@ updateButton.addEventListener(
             status.textContent =
                 "Please enter valid numbers.";
 
+
             updateButton.disabled =
                 false;
+
 
             updateButton.textContent =
                 "➕ Add Today's Numbers";
 
+
             return;
+
         }
 
+
+        // ==================================
+        // AT LEAST ONE NUMBER
+        // ==================================
 
         const totalAdded =
             values[0] +
@@ -925,15 +1184,23 @@ updateButton.addEventListener(
             status.textContent =
                 "Enter at least one number.";
 
+
             updateButton.disabled =
                 false;
+
 
             updateButton.textContent =
                 "➕ Add Today's Numbers";
 
+
             return;
+
         }
 
+
+        // ==================================
+        // TODAY
+        // ==================================
 
         const todayKey =
             getIndiaDateKey();
@@ -941,14 +1208,18 @@ updateButton.addEventListener(
 
         try {
 
-            // --------------------------------
+            // ==================================
             // ATOMIC DATABASE UPDATE
-            // --------------------------------
+            // ==================================
 
             const result =
                 await runTransaction(
                     numbersRef,
                     (currentData) => {
+
+                        // ----------------------
+                        // NEW DATABASE
+                        // ----------------------
 
                         if (!currentData) {
 
@@ -957,9 +1228,9 @@ updateButton.addEventListener(
                         }
 
 
-                        // ------------------------
+                        // ----------------------
                         // DUPLICATE PROTECTION
-                        // ------------------------
+                        // ----------------------
 
                         if (
                             currentData.history &&
@@ -971,43 +1242,53 @@ updateButton.addEventListener(
                         }
 
 
-                        // ------------------------
+                        // ----------------------
                         // EXISTING TOTALS
-                        // ------------------------
+                        // ----------------------
+                        //
+                        // IMPORTANT:
+                        // If Firebase is empty,
+                        // start from your original
+                        // totals instead of 0.
+                        //
 
                         const current1 =
-                            Number(
-                                currentData.person1 || 0
-                            );
+                            currentData.person1 !== undefined
+                                ? Number(currentData.person1)
+                                : startingTotals.person1;
+
 
                         const current2 =
-                            Number(
-                                currentData.person2 || 0
-                            );
+                            currentData.person2 !== undefined
+                                ? Number(currentData.person2)
+                                : startingTotals.person2;
+
 
                         const current3 =
-                            Number(
-                                currentData.person3 || 0
-                            );
+                            currentData.person3 !== undefined
+                                ? Number(currentData.person3)
+                                : startingTotals.person3;
 
 
-                        // ------------------------
-                        // ADD NEW VALUES
-                        // ------------------------
+                        // ----------------------
+                        // ADD TODAY'S NUMBERS
+                        // ----------------------
 
                         currentData.person1 =
                             current1 + values[0];
 
+
                         currentData.person2 =
                             current2 + values[1];
+
 
                         currentData.person3 =
                             current3 + values[2];
 
 
-                        // ------------------------
+                        // ----------------------
                         // HISTORY
-                        // ------------------------
+                        // ----------------------
 
                         if (!currentData.history) {
 
@@ -1033,9 +1314,9 @@ updateButton.addEventListener(
                         };
 
 
-                        // ------------------------
+                        // ----------------------
                         // LAST UPDATED
-                        // ------------------------
+                        // ----------------------
 
                         currentData.lastUpdated =
                             todayKey;
@@ -1047,39 +1328,54 @@ updateButton.addEventListener(
                 );
 
 
-            // --------------------------------
-            // TRANSACTION FAILED
-            // --------------------------------
+            // ==================================
+            // TRANSACTION NOT COMMITTED
+            // ==================================
 
             if (!result.committed) {
 
                 status.textContent =
                     "⚠️ Today's numbers were already added.";
 
+
                 updateButton.disabled =
                     true;
+
 
                 updateButton.textContent =
                     "Today's Numbers Already Added";
 
+
                 return;
+
             }
 
 
-            // --------------------------------
+            // ==================================
             // SUCCESS
-            // --------------------------------
+            // ==================================
 
             status.textContent =
                 "✅ Today's numbers added successfully!";
 
 
+            // Clear inputs
+
             people.forEach(
                 (person) => {
 
-                    document.getElementById(
-                        person.inputId
-                    ).value = "";
+                    const input =
+                        document.getElementById(
+                            person.inputId
+                        );
+
+
+                    if (input) {
+
+                        input.value =
+                            "";
+
+                    }
 
                 }
             );
@@ -1087,13 +1383,19 @@ updateButton.addEventListener(
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Update error:",
+                error
+            );
+
 
             status.textContent =
                 "❌ Update failed. Please try again.";
 
+
             updateButton.disabled =
                 false;
+
 
             updateButton.textContent =
                 "➕ Add Today's Numbers";

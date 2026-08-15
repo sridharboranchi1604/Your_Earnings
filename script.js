@@ -318,116 +318,6 @@ onValue(
 // BUILD HISTORY TABLE
 // ==========================================
 
-function buildHistory(history) {
-
-    const historyBody =
-        document.getElementById(
-            "historyBody"
-        );
-
-
-    const dates =
-        Object.keys(history);
-
-
-    if (dates.length === 0) {
-
-        historyBody.innerHTML = `
-            <tr>
-                <td
-                    colspan="5"
-                    class="empty-history"
-                >
-                    No daily history yet.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    // Newest date first
-
-    dates.sort(
-        (a, b) =>
-            b.localeCompare(a)
-    );
-
-
-    historyBody.innerHTML = "";
-
-
-    dates.forEach(
-        (dateKey) => {
-
-            const day =
-                history[dateKey];
-
-
-            const pintu =
-                Number(
-                    day.person1 || 0
-                );
-
-            const akshay =
-                Number(
-                    day.person2 || 0
-                );
-
-            const raju =
-                Number(
-                    day.person3 || 0
-                );
-
-
-            const total =
-                pintu +
-                akshay +
-                raju;
-
-
-            const row =
-                document.createElement("tr");
-
-
-            row.innerHTML = `
-
-                <td>
-                    ${formatDate(dateKey)}
-                </td>
-
-                <td>
-                    +${formatNumber(pintu)}
-                </td>
-
-                <td>
-                    +${formatNumber(akshay)}
-                </td>
-
-                <td>
-                    +${formatNumber(raju)}
-                </td>
-
-                <td>
-                    +${formatNumber(total)}
-                </td>
-
-            `;
-
-
-            historyBody.appendChild(row);
-
-        }
-    );
-
-}
-
-
-// ==========================================
-// BUILD CHART
-// ==========================================
-
 function buildChart(history) {
 
     const canvas =
@@ -435,11 +325,25 @@ function buildChart(history) {
             "progressChart"
         );
 
-
     if (!canvas) {
         return;
     }
 
+
+    // ======================================
+    // ORIGINAL / STARTING TOTALS
+    // ======================================
+
+    const startingPintu = 288588;
+
+    const startingAkshay = 294863;
+
+    const startingRaju = 283965;
+
+
+    // ======================================
+    // GET HISTORY DATES
+    // ======================================
 
     const dates =
         Object.keys(history)
@@ -449,39 +353,40 @@ function buildChart(history) {
             );
 
 
-    if (dates.length === 0) {
+    // ======================================
+    // CHART DATA
+    // ======================================
 
-        if (progressChart) {
+    let pintuTotal =
+        startingPintu;
 
-            progressChart.destroy();
+    let akshayTotal =
+        startingAkshay;
 
-            progressChart = null;
+    let rajuTotal =
+        startingRaju;
 
-        }
 
-        return;
-    }
+    const labels = [
+        "Starting Total"
+    ];
+
+    const pintuData = [
+        pintuTotal
+    ];
+
+    const akshayData = [
+        akshayTotal
+    ];
+
+    const rajuData = [
+        rajuTotal
+    ];
 
 
     // ======================================
-    // CREATE CUMULATIVE VALUES
+    // ADD DAILY HISTORY
     // ======================================
-
-    let pintuTotal = 0;
-
-    let akshayTotal = 0;
-
-    let rajuTotal = 0;
-
-
-    const labels = [];
-
-    const pintuData = [];
-
-    const akshayData = [];
-
-    const rajuData = [];
-
 
     dates.forEach(
         (dateKey) => {
@@ -539,7 +444,7 @@ function buildChart(history) {
 
 
     // ======================================
-    // CREATE NEW CHART
+    // CREATE CHART
     // ======================================
 
     progressChart =
@@ -563,7 +468,7 @@ function buildChart(history) {
 
                             borderWidth: 2,
 
-                            pointRadius: 3,
+                            pointRadius: 4,
 
                             fill: false
                         },
@@ -577,7 +482,7 @@ function buildChart(history) {
 
                             borderWidth: 2,
 
-                            pointRadius: 3,
+                            pointRadius: 4,
 
                             fill: false
                         },
@@ -591,7 +496,7 @@ function buildChart(history) {
 
                             borderWidth: 2,
 
-                            pointRadius: 3,
+                            pointRadius: 4,
 
                             fill: false
                         }
@@ -628,6 +533,7 @@ function buildChart(history) {
                             }
 
                         },
+
 
                         tooltip: {
 
@@ -679,7 +585,7 @@ function buildChart(history) {
 
                         y: {
 
-                            beginAtZero: true,
+                            beginAtZero: false,
 
                             ticks: {
 

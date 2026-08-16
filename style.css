@@ -1,7 +1,12 @@
 /* ============================================================
    NSE PORTFOLIO
-   PREMIUM FINTECH / INVESTMENT APP DESIGN
-   Reference 4 Style
+   PREMIUM FINTECH / INVESTMENT APP
+   FULL RESPONSIVE CSS
+   ============================================================ */
+
+
+/* ============================================================
+   RESET
    ============================================================ */
 
 * {
@@ -10,16 +15,19 @@
     box-sizing: border-box;
 }
 
-:root {
+html {
+    scroll-behavior: smooth;
+}
 
+:root {
     --background: #05070b;
     --background-2: #080b11;
 
     --card: #0d1118;
     --card-2: #10151e;
 
-    --border: rgba(255,255,255,0.07);
-    --border-bright: rgba(255,255,255,0.12);
+    --border: rgba(255, 255, 255, 0.07);
+    --border-bright: rgba(255, 255, 255, 0.12);
 
     --white: #ffffff;
     --text: #f4f6f8;
@@ -28,20 +36,20 @@
 
     --green: #20d889;
     --green-bright: #43eca0;
-    --green-bg: rgba(32,216,137,0.09);
+    --green-bg: rgba(32, 216, 137, 0.09);
 
     --blue: #4f8cff;
-    --blue-bg: rgba(79,140,255,0.12);
+    --blue-bg: rgba(79, 140, 255, 0.12);
 
     --purple: #9b72ff;
-    --purple-bg: rgba(155,114,255,0.12);
+    --purple-bg: rgba(155, 114, 255, 0.12);
 
     --red: #ff5c6c;
 
     --radius: 22px;
 
     --shadow:
-        0 25px 70px rgba(0,0,0,0.35);
+        0 25px 70px rgba(0, 0, 0, 0.35);
 }
 
 
@@ -49,12 +57,7 @@
    BASE
    ============================================================ */
 
-html {
-    scroll-behavior: smooth;
-}
-
 body {
-
     font-family:
         "Inter",
         -apple-system,
@@ -65,12 +68,12 @@ body {
     background:
         radial-gradient(
             circle at 50% -20%,
-            rgba(44,87,160,0.18),
+            rgba(44, 87, 160, 0.18),
             transparent 40%
         ),
         radial-gradient(
             circle at 100% 30%,
-            rgba(35,150,105,0.06),
+            rgba(35, 150, 105, 0.06),
             transparent 30%
         ),
         var(--background);
@@ -80,13 +83,17 @@ body {
     min-height: 100vh;
 
     overflow-x: hidden;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 
-/* subtle background */
+/* ============================================================
+   BACKGROUND GRID
+   ============================================================ */
 
 body::before {
-
     content: "";
 
     position: fixed;
@@ -99,12 +106,12 @@ body::before {
 
     background-image:
         linear-gradient(
-            rgba(255,255,255,0.018) 1px,
+            rgba(255, 255, 255, 0.018) 1px,
             transparent 1px
         ),
         linear-gradient(
             90deg,
-            rgba(255,255,255,0.018) 1px,
+            rgba(255, 255, 255, 0.018) 1px,
             transparent 1px
         );
 
@@ -126,16 +133,11 @@ body::before {
    ============================================================ */
 
 .app-shell {
+    width: min(1120px, calc(100% - 36px));
 
-    width: min(
-        1120px,
-        calc(100% - 36px)
-    );
+    margin: 0 auto;
 
-    margin: auto;
-
-    padding:
-        28px 0 60px;
+    padding: 28px 0 60px;
 }
 
 
@@ -144,31 +146,34 @@ body::before {
    ============================================================ */
 
 .topbar {
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
+    gap: 20px;
+
     margin-bottom: 18px;
 }
 
 
 .brand-area {
-
     display: flex;
 
     align-items: center;
 
     gap: 12px;
+
+    min-width: 0;
 }
 
 
 .brand-icon {
-
     width: 43px;
     height: 43px;
+
+    flex: 0 0 43px;
 
     display: flex;
 
@@ -185,15 +190,14 @@ body::before {
         );
 
     border:
-        1px solid rgba(89,143,255,0.25);
+        1px solid rgba(89, 143, 255, 0.25);
 
     box-shadow:
-        0 10px 35px rgba(25,87,190,0.18);
+        0 10px 35px rgba(25, 87, 190, 0.18);
 }
 
 
 .brand-icon span {
-
     font-size: 20px;
 
     font-weight: 800;
@@ -203,43 +207,45 @@ body::before {
 
 
 .topbar h1 {
-
     font-size: 19px;
 
     font-weight: 750;
 
     letter-spacing: -0.5px;
+
+    white-space: nowrap;
 }
 
 
 .topbar p {
-
     margin-top: 3px;
 
     color: var(--muted);
 
     font-size: 11px;
+
+    white-space: nowrap;
 }
 
 
 .market-status {
-
     display: flex;
 
     align-items: center;
 
     gap: 6px;
 
-    padding:
-        7px 10px;
+    flex-shrink: 0;
+
+    padding: 7px 10px;
 
     border-radius: 30px;
 
     border:
-        1px solid rgba(32,216,137,0.15);
+        1px solid rgba(32, 216, 137, 0.15);
 
     background:
-        rgba(32,216,137,0.06);
+        rgba(32, 216, 137, 0.06);
 
     color: var(--green);
 
@@ -252,9 +258,10 @@ body::before {
 
 
 .status-dot {
-
     width: 6px;
     height: 6px;
+
+    flex: 0 0 6px;
 
     border-radius: 50%;
 
@@ -269,8 +276,8 @@ body::before {
 
 
 @keyframes statusPulse {
-
-    0%,100% {
+    0%,
+    100% {
         opacity: 1;
         transform: scale(1);
     }
@@ -283,23 +290,24 @@ body::before {
 
 
 /* ============================================================
-   SYNC
+   SYNC ROW
    ============================================================ */
 
 .sync-row {
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
+    gap: 15px;
+
     margin-bottom: 30px;
 
     padding-bottom: 17px;
 
     border-bottom:
-        1px solid rgba(255,255,255,0.05);
+        1px solid rgba(255, 255, 255, 0.05);
 
     color: var(--muted);
 
@@ -308,20 +316,22 @@ body::before {
 
 
 .sync-left {
-
     display: flex;
 
     align-items: center;
 
     gap: 6px;
+
+    min-width: 0;
 }
 
 
 .sync-icon {
-
     color: var(--green);
 
     font-size: 13px;
+
+    flex-shrink: 0;
 }
 
 
@@ -330,19 +340,19 @@ body::before {
    ============================================================ */
 
 .section-heading {
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
+    gap: 15px;
+
     margin-bottom: 14px;
 }
 
 
 .eyebrow {
-
     display: block;
 
     margin-bottom: 5px;
@@ -358,7 +368,6 @@ body::before {
 
 
 .section-heading h2 {
-
     font-size: 18px;
 
     font-weight: 700;
@@ -368,33 +377,36 @@ body::before {
 
 
 /* ============================================================
-   INVESTOR CARDS
+   PORTFOLIO SECTION
    ============================================================ */
 
 .portfolio-section {
-
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(3, minmax(0, 1fr));
 
     gap: 14px;
 }
 
 
 .portfolio-section .section-heading {
-
     grid-column: 1 / -1;
 }
 
 
-.investor-card {
+/* ============================================================
+   INVESTOR CARD
+   ============================================================ */
 
+.investor-card {
     position: relative;
 
-    padding: 20px;
+    min-width: 0;
 
     min-height: 310px;
+
+    padding: 20px;
 
     overflow: hidden;
 
@@ -406,8 +418,8 @@ body::before {
     background:
         linear-gradient(
             145deg,
-            rgba(16,21,30,0.98),
-            rgba(8,11,17,0.98)
+            rgba(16, 21, 30, 0.98),
+            rgba(8, 11, 17, 0.98)
         );
 
     box-shadow: var(--shadow);
@@ -419,18 +431,16 @@ body::before {
 
 
 .investor-card:hover {
-
     transform: translateY(-4px);
 
     border-color:
-        rgba(255,255,255,0.13);
+        rgba(255, 255, 255, 0.13);
 }
 
 
-/* top glow */
+/* Card glow */
 
 .investor-card::before {
-
     content: "";
 
     position: absolute;
@@ -446,7 +456,7 @@ body::before {
     background:
         radial-gradient(
             circle,
-            rgba(79,140,255,0.14),
+            rgba(79, 140, 255, 0.14),
             transparent 70%
         );
 
@@ -459,31 +469,34 @@ body::before {
    ============================================================ */
 
 .card-top {
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
+    gap: 12px;
+
     margin-bottom: 28px;
 }
 
 
 .investor-info {
-
     display: flex;
 
     align-items: center;
 
     gap: 10px;
+
+    min-width: 0;
 }
 
 
 .avatar {
-
     width: 38px;
     height: 38px;
+
+    flex: 0 0 38px;
 
     display: flex;
 
@@ -496,47 +509,42 @@ body::before {
 
     font-weight: 800;
 
-    border: 1px solid rgba(255,255,255,0.08);
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
 }
 
 
 .avatar-blue {
-
-    background:
-        var(--blue-bg);
+    background: var(--blue-bg);
 
     color: #74a3ff;
 }
 
 
 .avatar-purple {
-
-    background:
-        var(--purple-bg);
+    background: var(--purple-bg);
 
     color: #b18fff;
 }
 
 
 .avatar-green {
-
-    background:
-        var(--green-bg);
+    background: var(--green-bg);
 
     color: var(--green-bright);
 }
 
 
 .investor-info h3 {
-
     font-size: 14px;
 
     font-weight: 700;
+
+    white-space: nowrap;
 }
 
 
 .investor-label {
-
     display: block;
 
     margin-top: 2px;
@@ -544,16 +552,19 @@ body::before {
     color: var(--muted);
 
     font-size: 9px;
+
+    white-space: nowrap;
 }
 
 
 .mini-live {
-
     display: flex;
 
     align-items: center;
 
     gap: 5px;
+
+    flex-shrink: 0;
 
     color: var(--muted);
 
@@ -566,9 +577,10 @@ body::before {
 
 
 .mini-live span {
-
     width: 5px;
     height: 5px;
+
+    flex: 0 0 5px;
 
     border-radius: 50%;
 
@@ -584,13 +596,11 @@ body::before {
    ============================================================ */
 
 .holding-area {
-
     margin-bottom: 22px;
 }
 
 
 .holding-label {
-
     display: block;
 
     margin-bottom: 7px;
@@ -606,6 +616,9 @@ body::before {
 
 
 .holding-value {
+    display: block;
+
+    max-width: 100%;
 
     font-size: 31px;
 
@@ -626,11 +639,10 @@ body::before {
    ============================================================ */
 
 .performance-row {
-
     display: grid;
 
     grid-template-columns:
-        1fr 1fr;
+        repeat(2, minmax(0, 1fr));
 
     gap: 8px;
 
@@ -640,21 +652,21 @@ body::before {
 
 .profit-box,
 .return-box {
+    min-width: 0;
 
     padding: 11px;
 
     border-radius: 13px;
 
     background:
-        rgba(255,255,255,0.025);
+        rgba(255, 255, 255, 0.025);
 
     border:
-        1px solid rgba(255,255,255,0.05);
+        1px solid rgba(255, 255, 255, 0.05);
 }
 
 
 .small-label {
-
     display: block;
 
     margin-bottom: 5px;
@@ -666,69 +678,69 @@ body::before {
     font-weight: 700;
 
     letter-spacing: 0.8px;
+
+    white-space: nowrap;
 }
 
 
 .profit,
 .return {
+    display: block;
 
     font-size: 13px;
 
     font-weight: 750;
+
+    white-space: nowrap;
 }
 
 
 .positive {
-
     color: var(--green-bright) !important;
 }
 
 
 .negative {
-
     color: var(--red) !important;
 }
 
 
-/* glow */
-
 .profit {
-
     animation:
         profitGlow 3s ease-in-out infinite;
 }
 
 
 @keyframes profitGlow {
-
-    0%,100% {
+    0%,
+    100% {
         text-shadow: 0 0 0 transparent;
     }
 
     50% {
         text-shadow:
-            0 0 14px rgba(32,216,137,0.35);
+            0 0 14px rgba(32, 216, 137, 0.35);
     }
 }
 
 
 /* ============================================================
-   DAILY
+   DAILY CHANGE
    ============================================================ */
 
 .daily-row {
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
-    padding:
-        11px 0;
+    gap: 10px;
+
+    padding: 11px 0;
 
     border-top:
-        1px solid rgba(255,255,255,0.05);
+        1px solid rgba(255, 255, 255, 0.05);
 
     color: var(--muted);
 
@@ -737,10 +749,11 @@ body::before {
 
 
 .daily-change-value {
-
     font-size: 10px;
 
     font-weight: 750;
+
+    white-space: nowrap;
 }
 
 
@@ -749,7 +762,6 @@ body::before {
    ============================================================ */
 
 .mini-chart {
-
     position: absolute;
 
     left: 0;
@@ -762,15 +774,15 @@ body::before {
     opacity: 0.8;
 
     overflow: hidden;
+
+    pointer-events: none;
 }
 
 
 .mini-chart-line {
-
     position: absolute;
 
     width: 130%;
-
     height: 100%;
 
     left: -10%;
@@ -778,7 +790,7 @@ body::before {
     bottom: -12px;
 
     border-top:
-        2px solid rgba(79,140,255,0.65);
+        2px solid rgba(79, 140, 255, 0.65);
 
     transform:
         rotate(-3deg);
@@ -786,27 +798,183 @@ body::before {
     border-radius: 50%;
 
     box-shadow:
-        0 -12px 25px rgba(79,140,255,0.12);
+        0 -12px 25px rgba(79, 140, 255, 0.12);
 }
 
 
 .purple-line {
-
     border-color:
-        rgba(155,114,255,0.65);
+        rgba(155, 114, 255, 0.65);
 
     box-shadow:
-        0 -12px 25px rgba(155,114,255,0.12);
+        0 -12px 25px rgba(155, 114, 255, 0.12);
 }
 
 
 .green-line {
-
     border-color:
-        rgba(32,216,137,0.65);
+        rgba(32, 216, 137, 0.65);
 
     box-shadow:
-        0 -12px 25px rgba(32,216,137,0.12);
+        0 -12px 25px rgba(32, 216, 137, 0.12);
+}
+
+
+/* ============================================================
+   SNAPSHOT
+   ============================================================ */
+
+.snapshot-section {
+    margin-bottom: 30px;
+}
+
+
+.snapshot-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+
+.snapshot-card {
+    position: relative;
+
+    min-width: 0;
+    min-height: 115px;
+
+    padding: 18px;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17, 23, 33, 0.96),
+            rgba(8, 11, 17, 0.96)
+        );
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.24);
+}
+
+
+.snapshot-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 120px;
+    height: 120px;
+
+    right: -55px;
+    top: -55px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(79, 140, 255, 0.13),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+.snapshot-label {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: var(--muted-2);
+
+    font-size: 7px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+
+    white-space: nowrap;
+}
+
+
+.snapshot-card strong {
+    display: block;
+
+    font-size: 20px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.6px;
+
+    white-space: nowrap;
+}
+
+
+.snapshot-value {
+    font-size: 20px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+.snapshot-sub {
+    display: block;
+
+    margin-top: 6px;
+
+    color: var(--muted);
+
+    font-size: 8px;
+
+    font-weight: 600;
+}
+
+
+.snapshot-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 7px 10px;
+
+    border-radius: 9px;
+
+    color: var(--green);
+
+    background:
+        rgba(32, 216, 137, 0.07);
+
+    border:
+        1px solid rgba(32, 216, 137, 0.13);
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.7px;
+
+    white-space: nowrap;
+}
+
+
+.dashboard-status {
+    color: var(--muted-2);
+
+    font-size: 9px;
+
+    font-weight: 600;
 }
 
 
@@ -817,14 +985,12 @@ body::before {
 .today-section,
 .chart-section,
 .history-section {
-
     margin-top: 30px;
 }
 
 
 .calendar-icon,
 .chart-badge {
-
     padding: 8px 10px;
 
     border-radius: 9px;
@@ -832,7 +998,7 @@ body::before {
     color: var(--muted);
 
     background:
-        rgba(255,255,255,0.035);
+        rgba(255, 255, 255, 0.035);
 
     border:
         1px solid var(--border);
@@ -840,34 +1006,38 @@ body::before {
     font-size: 9px;
 
     font-weight: 700;
+
+    white-space: nowrap;
 }
 
 
 .today-grid {
-
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(3, minmax(0, 1fr));
 
     gap: 9px;
 }
 
 
 .today-card {
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
+    gap: 10px;
+
+    min-width: 0;
+
     padding: 15px;
 
     border-radius: 15px;
 
     background:
-        rgba(13,17,24,0.9);
+        rgba(13, 17, 24, 0.9);
 
     border:
         1px solid var(--border);
@@ -875,23 +1045,27 @@ body::before {
 
 
 .today-person {
-
     display: flex;
 
     align-items: center;
 
     gap: 7px;
 
+    min-width: 0;
+
     color: var(--muted);
 
     font-size: 10px;
+
+    white-space: nowrap;
 }
 
 
 .today-dot {
-
     width: 6px;
     height: 6px;
+
+    flex: 0 0 6px;
 
     border-radius: 50%;
 }
@@ -901,9 +1075,11 @@ body::before {
     background: var(--blue);
 }
 
+
 .today-dot.purple {
     background: var(--purple);
 }
+
 
 .today-dot.green {
     background: var(--green);
@@ -911,10 +1087,11 @@ body::before {
 
 
 .today-card strong {
-
     font-size: 13px;
 
     font-weight: 700;
+
+    white-space: nowrap;
 }
 
 
@@ -923,6 +1100,7 @@ body::before {
    ============================================================ */
 
 .chart-card {
+    position: relative;
 
     padding: 20px;
 
@@ -939,17 +1117,17 @@ body::before {
         );
 
     box-shadow: var(--shadow);
+
+    overflow: hidden;
 }
 
 
 .chart-header {
-
     margin-bottom: 15px;
 }
 
 
 .chart-title {
-
     display: block;
 
     font-size: 12px;
@@ -959,7 +1137,6 @@ body::before {
 
 
 .chart-subtitle {
-
     display: block;
 
     margin-top: 3px;
@@ -971,19 +1148,20 @@ body::before {
 
 
 .chart-wrapper {
-
     position: relative;
+
+    width: 100%;
 
     height: 290px;
 
-    width: 100%;
+    min-height: 290px;
 }
 
 
 #growthChart {
+    display: block;
 
     width: 100% !important;
-
     height: 100% !important;
 }
 
@@ -993,7 +1171,6 @@ body::before {
    ============================================================ */
 
 .history-card {
-
     overflow: hidden;
 
     border-radius: var(--radius);
@@ -1002,14 +1179,13 @@ body::before {
         1px solid var(--border);
 
     background:
-        rgba(10,14,20,0.95);
+        rgba(10, 14, 20, 0.95);
 
     box-shadow: var(--shadow);
 }
 
 
 .table-scroll {
-
     width: 100%;
 
     overflow-x: auto;
@@ -1019,26 +1195,24 @@ body::before {
 
 
 table {
-
     width: 100%;
 
     min-width: 600px;
 
     border-collapse: collapse;
+
+    white-space: nowrap;
 }
 
 
 thead {
-
     background:
-        rgba(255,255,255,0.025);
+        rgba(255, 255, 255, 0.025);
 }
 
 
 th {
-
-    padding:
-        13px 16px;
+    padding: 13px 16px;
 
     text-align: left;
 
@@ -1055,23 +1229,46 @@ th {
 
 
 td {
-
-    padding:
-        14px 16px;
+    padding: 14px 16px;
 
     color: var(--muted);
 
     font-size: 10px;
 
     border-top:
-        1px solid rgba(255,255,255,0.045);
+        1px solid rgba(255, 255, 255, 0.045);
 }
 
 
 tbody tr:hover {
-
     background:
-        rgba(255,255,255,0.025);
+        rgba(255, 255, 255, 0.025);
+}
+
+
+.history-value {
+    font-weight: 700;
+
+    color: var(--text);
+}
+
+
+.history-change {
+    margin-top: 4px;
+
+    font-size: 8px;
+
+    font-weight: 700;
+}
+
+
+.change-positive {
+    color: var(--green-bright);
+}
+
+
+.change-negative {
+    color: var(--red);
 }
 
 
@@ -1080,27 +1277,28 @@ tbody tr:hover {
    ============================================================ */
 
 .admin-section {
-
     margin-top: 40px;
 }
 
 
 .admin-header {
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
+    gap: 15px;
+
     margin-bottom: 14px;
 }
 
 
 .lock-icon {
-
     width: 35px;
     height: 35px;
+
+    flex: 0 0 35px;
 
     display: flex;
 
@@ -1110,7 +1308,7 @@ tbody tr:hover {
     border-radius: 10px;
 
     background:
-        rgba(255,255,255,0.04);
+        rgba(255, 255, 255, 0.04);
 
     border:
         1px solid var(--border);
@@ -1120,7 +1318,6 @@ tbody tr:hover {
 
 
 .admin-box {
-
     padding: 20px;
 
     border-radius: var(--radius);
@@ -1131,20 +1328,18 @@ tbody tr:hover {
     background:
         linear-gradient(
             145deg,
-            rgba(15,20,29,0.96),
-            rgba(8,11,17,0.96)
+            rgba(15, 20, 29, 0.96),
+            rgba(8, 11, 17, 0.96)
         );
 }
 
 
 .hidden {
-
     display: none !important;
 }
 
 
 .admin-box-title {
-
     margin-bottom: 18px;
 
     font-size: 13px;
@@ -1153,14 +1348,38 @@ tbody tr:hover {
 }
 
 
-.input-group {
+.admin-info-box {
+    margin-bottom: 18px;
 
+    padding: 11px 13px;
+
+    border-radius: 11px;
+
+    border:
+        1px solid rgba(79, 140, 255, 0.12);
+
+    background:
+        rgba(79, 140, 255, 0.045);
+
+    color: var(--muted);
+
+    font-size: 9px;
+
+    line-height: 1.6;
+}
+
+
+.admin-info-box strong {
+    color: #b7ccff;
+}
+
+
+.input-group {
     margin-bottom: 13px;
 }
 
 
 .input-group label {
-
     display: block;
 
     margin-bottom: 6px;
@@ -1174,19 +1393,17 @@ tbody tr:hover {
 
 
 .input-group input {
-
     width: 100%;
 
-    padding:
-        13px 13px;
+    padding: 13px;
 
     border-radius: 11px;
 
     border:
-        1px solid rgba(255,255,255,0.08);
+        1px solid rgba(255, 255, 255, 0.08);
 
     background:
-        rgba(255,255,255,0.035);
+        rgba(255, 255, 255, 0.035);
 
     color: white;
 
@@ -1203,18 +1420,16 @@ tbody tr:hover {
 
 
 .input-group input:focus {
-
     border-color:
-        rgba(79,140,255,0.55);
+        rgba(79, 140, 255, 0.55);
 
     background:
-        rgba(79,140,255,0.04);
+        rgba(79, 140, 255, 0.04);
 }
 
 
 .primary-btn,
 .update-btn {
-
     width: 100%;
 
     padding: 13px;
@@ -1248,16 +1463,25 @@ tbody tr:hover {
 
 .primary-btn:hover,
 .update-btn:hover {
-
     transform: translateY(-2px);
 
     box-shadow:
-        0 10px 25px rgba(50,110,255,0.2);
+        0 10px 25px rgba(50, 110, 255, 0.2);
+}
+
+
+.update-btn:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+    transform: none !important;
+
+    box-shadow: none !important;
 }
 
 
 .admin-message {
-
     margin-top: 10px;
 
     color: var(--muted);
@@ -1267,19 +1491,19 @@ tbody tr:hover {
 
 
 .admin-user-row {
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
+    gap: 15px;
+
     margin-bottom: 18px;
 }
 
 
 .admin-label {
-
     display: block;
 
     margin-bottom: 4px;
@@ -1295,23 +1519,24 @@ tbody tr:hover {
 
 
 .admin-user-row strong {
-
     font-size: 13px;
+
+    overflow-wrap: anywhere;
 }
 
 
 .logout-btn {
+    flex-shrink: 0;
 
-    padding:
-        8px 11px;
+    padding: 8px 11px;
 
     border-radius: 9px;
 
     border:
-        1px solid rgba(255,255,255,0.08);
+        1px solid rgba(255, 255, 255, 0.08);
 
     background:
-        rgba(255,255,255,0.04);
+        rgba(255, 255, 255, 0.04);
 
     color: var(--muted);
 
@@ -1328,7 +1553,6 @@ tbody tr:hover {
    ============================================================ */
 
 footer {
-
     margin-top: 50px;
 
     text-align: center;
@@ -1336,13 +1560,10 @@ footer {
 
 
 .footer-line {
-
     width: 40px;
-
     height: 2px;
 
-    margin:
-        0 auto 13px;
+    margin: 0 auto 13px;
 
     border-radius: 5px;
 
@@ -1352,7 +1573,6 @@ footer {
 
 
 footer p {
-
     color: var(--muted);
 
     font-size: 9px;
@@ -1362,7 +1582,6 @@ footer p {
 
 
 footer span {
-
     display: block;
 
     margin-top: 4px;
@@ -1375,310 +1594,256 @@ footer span {
 
 /* ============================================================
    TABLET
+   651px - 900px
    ============================================================ */
 
 @media (max-width: 900px) {
 
-    .portfolio-section {
-
-        grid-template-columns:
-            repeat(2, 1fr);
+    .app-shell {
+        width: calc(100% - 30px);
     }
+
+
+    .portfolio-section {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
 
     .portfolio-section .section-heading {
-
         grid-column: 1 / -1;
     }
 
-    .investor-card:last-child {
 
+    .investor-card:last-child {
         grid-column: 1 / -1;
+    }
+
+
+    .snapshot-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+
+    .today-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+
+    .holding-value {
+        font-size: 29px;
     }
 }
 
 
 /* ============================================================
    MOBILE
+   Up to 650px
    ============================================================ */
 
 @media (max-width: 650px) {
 
-    .app-shell {
-
-        width:
-            calc(100% - 22px);
-
-        padding:
-            16px 0 40px;
+    body {
+        overflow-x: hidden;
     }
 
 
-    .topbar {
+    .app-shell {
+        width: calc(100% - 24px);
 
-        margin-bottom: 15px;
+        padding: 16px 0 40px;
+    }
+
+
+    /* --------------------------------------------------------
+       HEADER
+       -------------------------------------------------------- */
+
+    .topbar {
+        align-items: center;
+
+        gap: 10px;
+
+        margin-bottom: 14px;
+    }
+
+
+    .brand-area {
+        gap: 9px;
+
+        min-width: 0;
     }
 
 
     .brand-icon {
+        width: 38px;
+        height: 38px;
 
-        width: 39px;
-        height: 39px;
+        flex-basis: 38px;
 
-        border-radius: 12px;
+        border-radius: 11px;
     }
 
 
     .brand-icon span {
-
-        font-size: 18px;
+        font-size: 17px;
     }
 
 
     .topbar h1 {
+        font-size: 15px;
 
-        font-size: 16px;
+        letter-spacing: -0.3px;
     }
 
 
     .topbar p {
+        margin-top: 2px;
 
-        font-size: 9px;
+        font-size: 8px;
     }
 
 
     .market-status {
+        padding: 6px 8px;
 
-        padding:
-            6px 8px;
+        font-size: 7px;
 
-        font-size: 8px;
+        letter-spacing: 0.4px;
     }
 
 
-    .sync-row {
+    /* --------------------------------------------------------
+       SYNC
+       -------------------------------------------------------- */
 
+    .sync-row {
         margin-bottom: 22px;
 
         padding-bottom: 13px;
 
-        font-size: 9px;
+        font-size: 8px;
     }
 
 
-    .portfolio-section {
+    /* --------------------------------------------------------
+       GENERAL SECTION HEADINGS
+       -------------------------------------------------------- */
 
-        display: flex;
-
-        flex-direction: column;
-
-        gap: 11px;
-    }
-
-
-    .portfolio-section .section-heading {
-
-        margin-bottom: 1px;
+    .section-heading {
+        margin-bottom: 11px;
     }
 
 
     .section-heading h2 {
-
-        font-size: 16px;
+        font-size: 15px;
     }
 
 
     .eyebrow {
+        margin-bottom: 4px;
 
         font-size: 7px;
 
-        letter-spacing: 1.2px;
+        letter-spacing: 1px;
     }
 
 
-    .investor-card {
+    /* --------------------------------------------------------
+       SNAPSHOT
+       -------------------------------------------------------- */
 
-        min-height: 282px;
-
-        padding: 17px;
-
-        border-radius: 19px;
+    .snapshot-section {
+        margin-bottom: 24px;
     }
 
 
-    .card-top {
+    .snapshot-grid {
+        display: grid;
 
-        margin-bottom: 23px;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 8px;
     }
 
 
-    .avatar {
+    .snapshot-card {
+        min-height: 104px;
 
-        width: 35px;
-        height: 35px;
+        padding: 13px;
 
-        border-radius: 11px;
-
-        font-size: 12px;
+        border-radius: 15px;
     }
 
 
-    .investor-info h3 {
-
-        font-size: 13px;
+    .snapshot-card:last-child {
+        grid-column: 1 / -1;
     }
 
 
-    .holding-label {
+    .snapshot-label {
+        margin-bottom: 7px;
 
         font-size: 7px;
 
-        margin-bottom: 6px;
+        letter-spacing: 0.9px;
     }
 
 
-    .holding-value {
+    .snapshot-card strong,
+    .snapshot-value {
+        font-size: 17px;
 
-        font-size: 29px;
-
-        letter-spacing: -1.2px;
+        letter-spacing: -0.4px;
     }
 
 
-    .performance-row {
-
-        margin-top: 20px;
-
-        margin-bottom: 10px;
-    }
-
-
-    .profit-box,
-    .return-box {
-
-        padding: 10px;
-
-        border-radius: 11px;
-    }
-
-
-    .small-label {
-
-        font-size: 6px;
-    }
-
-
-    .profit,
-    .return {
-
-        font-size: 12px;
-    }
-
-
-    .daily-row {
-
-        padding:
-            10px 0;
+    .snapshot-sub {
+        margin-top: 5px;
 
         font-size: 8px;
+
+        line-height: 1.4;
     }
 
 
-    .daily-change-value {
+    .snapshot-badge {
+        padding: 6px 8px;
 
-        font-size: 9px;
+        font-size: 7px;
     }
 
 
-    .today-section,
-    .chart-section,
-    .history-section {
-
-        margin-top: 25px;
+    .dashboard-status {
+        display: none;
     }
 
 
-    .today-grid {
+    /* --------------------------------------------------------
+       INVESTOR CARDS
+       -------------------------------------------------------- */
 
+    .portfolio-section {
         display: flex;
 
         flex-direction: column;
 
-        gap: 7px;
+        gap: 10px;
     }
 
 
-    .today-card {
-
-        padding:
-            12px 13px;
-
-        border-radius: 13px;
+    .portfolio-section .section-heading {
+        margin-bottom: 1px;
     }
 
 
-    .today-card strong {
+    .investor-card {
+        width: 100%;
 
-        font-size: 12px;
-    }
-
-
-    .chart-card {
-
-        padding: 13px;
-
-        border-radius: 19px;
-    }
-
-
-    .chart-wrapper {
-
-        height: 245px;
-    }
-
-
-    .chart-title {
-
-        font-size: 11px;
-    }
-
-
-    .chart-subtitle {
-
-        font-size: 8px;
-    }
-
-
-    .history-card {
-
-        border-radius: 18px;
-    }
-
-
-    th {
-
-        padding:
-            11px 12px;
-
-        font-size: 7px;
-    }
-
-
-    td {
-
-        padding:
-            12px;
-
-        font-size: 9px;
-    }
-
-
-    .admin-section {
-
-        margin-top: 32px;
-    }
-
-
-    .admin-box {
+        min-height: 0;
 
         padding: 16px;
 
@@ -1686,58 +1851,511 @@ footer span {
     }
 
 
-    footer {
+    .investor-card:hover {
+        transform: none;
+    }
 
+
+    .card-top {
+        margin-bottom: 19px;
+    }
+
+
+    .avatar {
+        width: 34px;
+        height: 34px;
+
+        flex-basis: 34px;
+
+        border-radius: 10px;
+
+        font-size: 11px;
+    }
+
+
+    .investor-info {
+        gap: 8px;
+    }
+
+
+    .investor-info h3 {
+        font-size: 13px;
+    }
+
+
+    .investor-label {
+        font-size: 8px;
+    }
+
+
+    .mini-live {
+        font-size: 7px;
+
+        letter-spacing: 0.4px;
+    }
+
+
+    .holding-area {
+        margin-bottom: 17px;
+    }
+
+
+    .holding-label {
+        margin-bottom: 6px;
+
+        font-size: 7px;
+
+        letter-spacing: 0.9px;
+    }
+
+
+    .holding-value {
+        font-size: clamp(25px, 8vw, 30px);
+
+        letter-spacing: -1px;
+    }
+
+
+    /* --------------------------------------------------------
+       PERFORMANCE BOXES
+       -------------------------------------------------------- */
+
+    .performance-row {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 7px;
+
+        margin-bottom: 10px;
+    }
+
+
+    .profit-box,
+    .return-box {
+        padding: 9px;
+
+        border-radius: 10px;
+    }
+
+
+    .small-label {
+        margin-bottom: 4px;
+
+        font-size: 6px;
+
+        letter-spacing: 0.6px;
+    }
+
+
+    .profit,
+    .return {
+        font-size: 12px;
+
+        letter-spacing: -0.2px;
+    }
+
+
+    /* --------------------------------------------------------
+       DAILY CHANGE
+       -------------------------------------------------------- */
+
+    .daily-row {
+        padding: 9px 0;
+
+        font-size: 8px;
+    }
+
+
+    .daily-change-value {
+        font-size: 9px;
+    }
+
+
+    /* --------------------------------------------------------
+       TODAY
+       -------------------------------------------------------- */
+
+    .today-section,
+    .chart-section,
+    .history-section {
+        margin-top: 24px;
+    }
+
+
+    .today-grid {
+        display: grid;
+
+        grid-template-columns:
+            1fr;
+
+        gap: 7px;
+    }
+
+
+    .today-card {
+        padding: 11px 13px;
+
+        border-radius: 12px;
+    }
+
+
+    .today-person {
+        font-size: 9px;
+    }
+
+
+    .today-card strong {
+        font-size: 12px;
+    }
+
+
+    /* --------------------------------------------------------
+       CHART
+       -------------------------------------------------------- */
+
+    .chart-card {
+        padding: 13px;
+
+        border-radius: 18px;
+    }
+
+
+    .chart-header {
+        margin-bottom: 10px;
+    }
+
+
+    .chart-title {
+        font-size: 11px;
+    }
+
+
+    .chart-subtitle {
+        font-size: 8px;
+    }
+
+
+    .chart-wrapper {
+        width: 100%;
+
+        height: 235px;
+
+        min-height: 235px;
+    }
+
+
+    /* --------------------------------------------------------
+       HISTORY
+       -------------------------------------------------------- */
+
+    .history-card {
+        border-radius: 17px;
+    }
+
+
+    .table-scroll {
+        width: 100%;
+
+        overflow-x: auto;
+    }
+
+
+    table {
+        min-width: 600px;
+    }
+
+
+    th {
+        padding: 10px 12px;
+
+        font-size: 7px;
+    }
+
+
+    td {
+        padding: 11px 12px;
+
+        font-size: 9px;
+    }
+
+
+    .history-change {
+        font-size: 8px;
+    }
+
+
+    /* --------------------------------------------------------
+       ADMIN
+       -------------------------------------------------------- */
+
+    .admin-section {
+        margin-top: 30px;
+    }
+
+
+    .admin-header {
+        margin-bottom: 11px;
+    }
+
+
+    .lock-icon {
+        width: 32px;
+        height: 32px;
+
+        flex-basis: 32px;
+
+        border-radius: 9px;
+    }
+
+
+    .admin-box {
+        padding: 15px;
+
+        border-radius: 17px;
+    }
+
+
+    .admin-box-title {
+        margin-bottom: 15px;
+
+        font-size: 12px;
+    }
+
+
+    .admin-info-box {
+        margin-bottom: 15px;
+
+        padding: 10px 11px;
+
+        font-size: 8px;
+
+        line-height: 1.55;
+    }
+
+
+    .input-group {
+        margin-bottom: 11px;
+    }
+
+
+    .input-group label {
+        margin-bottom: 5px;
+
+        font-size: 8px;
+    }
+
+
+    .input-group input {
+        padding: 12px;
+
+        border-radius: 10px;
+
+        font-size: 12px;
+    }
+
+
+    .primary-btn,
+    .update-btn {
+        padding: 12px;
+
+        border-radius: 10px;
+
+        font-size: 10px;
+    }
+
+
+    .admin-message {
+        font-size: 8px;
+    }
+
+
+    .admin-user-row {
+        margin-bottom: 14px;
+    }
+
+
+    .admin-user-row strong {
+        font-size: 11px;
+    }
+
+
+    .logout-btn {
+        padding: 7px 9px;
+
+        font-size: 8px;
+    }
+
+
+    /* --------------------------------------------------------
+       FOOTER
+       -------------------------------------------------------- */
+
+    footer {
         margin-top: 35px;
+    }
+
+
+    footer p {
+        font-size: 8px;
+    }
+
+
+    footer span {
+        font-size: 7px;
     }
 }
 
 
 /* ============================================================
    SMALL PHONES
+   Up to 380px
    ============================================================ */
 
 @media (max-width: 380px) {
 
     .app-shell {
+        width: calc(100% - 18px);
 
-        width:
-            calc(100% - 18px);
+        padding-top: 13px;
+    }
+
+
+    .topbar {
+        gap: 7px;
+    }
+
+
+    .brand-icon {
+        width: 35px;
+        height: 35px;
+
+        flex-basis: 35px;
+
+        border-radius: 10px;
+    }
+
+
+    .brand-icon span {
+        font-size: 16px;
     }
 
 
     .topbar h1 {
+        font-size: 14px;
+    }
 
-        font-size: 15px;
+
+    .topbar p {
+        font-size: 7px;
     }
 
 
     .market-status {
+        padding: 5px 6px;
 
-        padding:
-            5px 7px;
+        font-size: 6px;
+    }
 
+
+    .snapshot-grid {
+        gap: 7px;
+    }
+
+
+    .snapshot-card {
+        min-height: 98px;
+
+        padding: 11px;
+
+        border-radius: 14px;
+    }
+
+
+    .snapshot-card strong,
+    .snapshot-value {
+        font-size: 15px;
+    }
+
+
+    .snapshot-sub {
         font-size: 7px;
     }
 
 
     .investor-card {
+        padding: 14px;
 
-        padding: 15px;
-
-        min-height: 275px;
+        border-radius: 16px;
     }
 
 
     .holding-value {
+        font-size: 25px;
 
-        font-size: 27px;
+        letter-spacing: -0.8px;
+    }
+
+
+    .profit,
+    .return {
+        font-size: 11px;
+    }
+
+
+    .today-card {
+        padding: 10px 11px;
+    }
+
+
+    .chart-card {
+        padding: 11px;
     }
 
 
     .chart-wrapper {
+        height: 215px;
 
-        height: 225px;
+        min-height: 215px;
+    }
+
+
+    .admin-box {
+        padding: 13px;
+    }
+}
+
+
+/* ============================================================
+   VERY SMALL PHONES
+   Up to 340px
+   ============================================================ */
+
+@media (max-width: 340px) {
+
+    .app-shell {
+        width: calc(100% - 14px);
+    }
+
+
+    .market-status {
+        display: none;
+    }
+
+
+    .holding-value {
+        font-size: 23px;
+    }
+
+
+    .snapshot-card strong,
+    .snapshot-value {
+        font-size: 14px;
+    }
+
+
+    .profit,
+    .return {
+        font-size: 10px;
     }
 }
 
@@ -1747,23 +2365,18 @@ footer span {
    ============================================================ */
 
 ::-webkit-scrollbar {
-
     width: 5px;
     height: 5px;
 }
 
 
 ::-webkit-scrollbar-track {
-
-    background:
-        #07090d;
+    background: #07090d;
 }
 
 
 ::-webkit-scrollbar-thumb {
-
-    background:
-        #252c37;
+    background: #252c37;
 
     border-radius: 20px;
 }
@@ -1774,393 +2387,37 @@ footer span {
    ============================================================ */
 
 ::selection {
-
     background:
-        rgba(79,140,255,0.3);
+        rgba(79, 140, 255, 0.3);
 
     color: white;
 }
 
-/* ============================================================
-   PREMIUM PORTFOLIO SNAPSHOT
-   ============================================================ */
-
-.snapshot-section {
-    margin-bottom: 30px;
-}
-
-.snapshot-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
-
-.snapshot-card {
-    position: relative;
-    overflow: hidden;
-    min-height: 115px;
-    padding: 18px;
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.07);
-    background:
-        linear-gradient(
-            145deg,
-            rgba(17,23,33,0.96),
-            rgba(8,11,17,0.96)
-        );
-    box-shadow:
-        0 18px 45px rgba(0,0,0,0.24);
-}
-
-.snapshot-card::after {
-    content: "";
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    right: -55px;
-    top: -55px;
-    border-radius: 50%;
-    background: radial-gradient(
-        circle,
-        rgba(79,140,255,0.13),
-        transparent 70%
-    );
-    pointer-events: none;
-}
-
-.snapshot-label {
-    display: block;
-    margin-bottom: 10px;
-    color: var(--muted-2);
-    font-size: 7px;
-    font-weight: 800;
-    letter-spacing: 1.2px;
-}
-
-.snapshot-card strong {
-    display: block;
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.6px;
-}
-
-.snapshot-sub {
-    display: block;
-    margin-top: 6px;
-    color: var(--muted);
-    font-size: 8px;
-    font-weight: 600;
-}
-
-.snapshot-badge {
-    padding: 7px 10px;
-    border-radius: 9px;
-    color: var(--green);
-    background: rgba(32,216,137,0.07);
-    border: 1px solid rgba(32,216,137,0.13);
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 0.7px;
-}
-
-.dashboard-status {
-    color: var(--muted-2);
-    font-size: 9px;
-    font-weight: 600;
-}
-
-.admin-info-box {
-    margin-bottom: 18px;
-    padding: 11px 13px;
-    border-radius: 11px;
-    border: 1px solid rgba(79,140,255,0.12);
-    background: rgba(79,140,255,0.045);
-    color: var(--muted);
-    font-size: 9px;
-    line-height: 1.6;
-}
-
-.admin-info-box strong {
-    color: #b7ccff;
-}
-
 
 /* ============================================================
-   HISTORY VALUES
-   ============================================================ */
-
-.history-value {
-    font-weight: 700;
-    color: var(--text);
-}
-
-.history-change {
-    margin-top: 4px;
-    font-size: 8px;
-    font-weight: 700;
-}
-
-
-/* ============================================================
-   CHART
-   ============================================================ */
-
-.chart-card {
-    position: relative;
-}
-
-.chart-wrapper {
-    min-height: 290px;
-}
-
-
-/* ============================================================
-   DISABLED UPDATE BUTTON
-   ============================================================ */
-
-.update-btn:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-
-/* ============================================================
-   MOBILE
+   MOBILE SAFETY
+   Prevent accidental word-by-word breaking
    ============================================================ */
 
 @media (max-width: 650px) {
 
-    .snapshot-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .snapshot-card {
-        min-height: auto;
-        padding: 15px;
-    }
-
-    .snapshot-card strong {
-        font-size: 18px;
-    }
-
-    .dashboard-status {
-        display: none;
-    }
-
-}
-
-/* ============================================================
-   MOBILE RESPONSIVE FIX
-   ============================================================ */
-
-@media (max-width: 650px) {
-
-    body {
-        overflow-x: hidden;
-    }
-
-    .app-shell {
-        width: calc(100% - 24px);
-        margin: 0 auto;
-    }
-
-    /* Header */
-    .topbar {
-        padding: 18px 0;
-    }
-
-    .topbar h1 {
-        font-size: 22px;
-    }
-
-    .topbar p {
-        font-size: 12px;
-    }
-
-    /* Portfolio Snapshot */
-    .snapshot-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .snapshot-card {
-        padding: 14px;
-        min-width: 0;
-    }
-
-    .snapshot-card:last-child {
-        grid-column: span 2;
-    }
-
-    .snapshot-value {
-        font-size: 18px;
-        white-space: nowrap;
-    }
-
-    .snapshot-label {
-        font-size: 11px;
-    }
-
-    .snapshot-sub {
-        font-size: 11px;
-    }
-
-    /* Investor cards */
-    .investor-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-
-    .investor-card {
-        padding: 18px;
-        min-width: 0;
-    }
-
-    .investor-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-    }
-
-    .investor-name {
-        font-size: 17px;
-    }
-
-    .investor-value {
-        font-size: 28px;
-        line-height: 1.15;
-        white-space: nowrap;
-    }
-
-    .investor-details {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 14px;
-    }
-
-    .profit,
-    .return {
-        font-size: 14px;
-    }
-
-    .daily-change {
-        margin-top: 12px;
-        font-size: 13px;
-    }
-
-    /* Daily section */
-    .daily-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-
-    /* Chart */
-    .chart-card {
-        padding: 14px;
-        overflow: hidden;
-    }
-
-    .chart-container {
-        width: 100%;
-        max-width: 100%;
-        overflow: hidden;
-    }
-
-    /* History */
-    .history-card {
-        padding: 14px;
-        overflow: hidden;
-    }
-
-    .history-table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .history-table {
-        min-width: 600px;
-        white-space: nowrap;
-    }
-
-    /* Admin panel */
-    .admin-panel {
-        padding: 16px;
-    }
-
-    .admin-inputs {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-
-    .admin-inputs input {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    #update-btn,
-    #logout-btn,
-    #login-btn {
-        width: 100%;
-    }
-
-    /* Login */
-    #login-section {
-        padding: 18px;
-    }
-
-    #email,
-    #password {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* Prevent text breaking into individual letters */
     h1,
     h2,
     h3,
     p,
     span,
-    div {
-        overflow-wrap: normal;
+    strong,
+    label,
+    td,
+    th {
         word-break: normal;
-    }
-}
 
-
-/* Small phones */
-@media (max-width: 380px) {
-
-    .app-shell {
-        width: calc(100% - 18px);
+        overflow-wrap: normal;
     }
 
-    .snapshot-grid {
-        gap: 8px;
-    }
 
-    .snapshot-card {
-        padding: 11px;
-    }
-
-    .snapshot-value {
-        font-size: 16px;
-    }
-
-    .investor-card {
-        padding: 15px;
-    }
-
-    .investor-value {
-        font-size: 24px;
-    }
-
-    .investor-details {
-        gap: 8px;
+    input,
+    button {
+        max-width: 100%;
     }
 }

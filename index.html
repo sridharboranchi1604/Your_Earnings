@@ -10,7 +10,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;750;800&display=swap"
         rel="stylesheet">
@@ -25,48 +27,90 @@
     <div class="app-shell">
 
         <!-- =====================================================
-         HEADER
-         ===================================================== -->
+             HEADER
+             ===================================================== -->
 
         <header class="topbar">
 
-            <div class="brand">
-                <div class="brand-icon">₹</div>
+            <!-- BRAND / OWNER -->
+
+            <div class="brand-area">
+
+                <!-- ₹ ICON -->
+
+                <div class="brand-icon">
+                    <span>₹</span>
+                </div>
+
+
+                <!-- BRAND CONTENT -->
 
                 <div class="brand-content">
-                    <div class="brand-name">NSE Portfolio</div>
+
+                    <!-- WEBSITE / DASHBOARD NAME -->
+
+                    <div class="brand-name">
+                        NSE Portfolio
+                    </div>
+
+
+                    <!-- OWNER -->
 
                     <div class="owner-line">
-                        <span class="owner-name">Sridhar Boranchi</span>
-                        <span class="owner-badge">OWNER</span>
+
+                        <span class="owner-name">
+                            Sridhar Boranchi
+                        </span>
+
+                        <span class="owner-badge">
+                            OWNER
+                        </span>
+
                     </div>
+
+
+                    <!-- SUBTITLE -->
 
                     <div class="brand-subtitle">
                         Founder &amp; Portfolio Owner
                     </div>
+
                 </div>
+
             </div>
 
+
+            <!-- MARKET STATUS -->
+
             <div class="market-status">
+
                 <span class="status-dot"></span>
+
                 LIVE
+
             </div>
 
         </header>
 
 
         <!-- =====================================================
-         SYNC
-         ===================================================== -->
+             SYNC
+             ===================================================== -->
 
         <div class="sync-row">
 
             <div class="sync-left">
-                <span class="sync-icon">↻</span>
+
+                <span class="sync-icon">
+                    ↻
+                </span>
+
                 <span id="last-updated">
                     Waiting for latest update...
                 </span>
+
             </div>
+
 
             <div class="dashboard-status">
                 Portfolio Tracking
@@ -76,20 +120,25 @@
 
 
         <!-- =====================================================
-         PORTFOLIO SNAPSHOT
-         ===================================================== -->
+             PORTFOLIO SNAPSHOT
+             ===================================================== -->
 
         <section class="snapshot-section">
 
             <div class="section-heading">
 
                 <div>
+
                     <span class="eyebrow">
                         PORTFOLIO SNAPSHOT
                     </span>
 
-                    <h2>Today's Overview</h2>
+                    <h2>
+                        Today's Overview
+                    </h2>
+
                 </div>
+
 
                 <div class="snapshot-badge">
                     LIVE
@@ -99,6 +148,8 @@
 
 
             <div class="snapshot-grid">
+
+                <!-- TOP PERFORMER -->
 
                 <div class="snapshot-card">
 
@@ -110,12 +161,15 @@
                         —
                     </strong>
 
-                    <span id="top-performer-value" class="snapshot-sub">
+                    <span id="top-performer-value"
+                        class="snapshot-sub">
                         —
                     </span>
 
                 </div>
 
+
+                <!-- MARKET MOVEMENT -->
 
                 <div class="snapshot-card">
 
@@ -127,23 +181,32 @@
                         —
                     </strong>
 
-                    <span id="market-movement-sub" class="snapshot-sub">
+                    <span id="market-movement-sub"
+                        class="snapshot-sub">
                         Today's movement
                     </span>
 
                 </div>
 
 
+                <!-- LAST SYNC -->
+
                 <div class="snapshot-card">
-                    <div class="snapshot-label">Last Sync</div>
 
-                    <div id="snapshot-last-sync" class="snapshot-value">
+                    <div class="snapshot-label">
+                        Last Sync
+                    </div>
+
+                    <div id="snapshot-last-sync"
+                        class="snapshot-value">
                         —
                     </div>
 
-                    <div id="snapshot-last-sync-exact" class="snapshot-sub">
+                    <div id="snapshot-last-sync-exact"
+                        class="snapshot-sub">
                         —
                     </div>
+
                 </div>
 
             </div>
@@ -152,25 +215,31 @@
 
 
         <!-- =====================================================
-         INVESTORS
-         ===================================================== -->
+             INVESTORS
+             ===================================================== -->
 
         <section class="portfolio-section">
 
             <div class="section-heading">
 
                 <div>
+
                     <span class="eyebrow">
                         INVESTMENTS
                     </span>
 
-                    <h2>Portfolio Performance</h2>
+                    <h2>
+                        Portfolio Performance
+                    </h2>
+
                 </div>
 
             </div>
 
 
-            <!-- PINTU -->
+            <!-- =================================================
+                 PINTU
+                 ================================================= -->
 
             <article class="investor-card">
 
@@ -184,7 +253,9 @@
 
                         <div>
 
-                            <h3>Pintu</h3>
+                            <h3>
+                                Pintu
+                            </h3>
 
                             <span class="investor-label">
                                 Investor
@@ -194,9 +265,13 @@
 
                     </div>
 
+
                     <div class="mini-live">
+
                         <span></span>
+
                         LIVE
+
                     </div>
 
                 </div>
@@ -208,7 +283,8 @@
                         CURRENT HOLDING
                     </span>
 
-                    <div id="pintu-value" class="holding-value">
+                    <div id="pintu-value"
+                        class="holding-value">
                         ₹0.00
                     </div>
 
@@ -223,7 +299,8 @@
                             NET PROFIT
                         </span>
 
-                        <div id="pintu-profit" class="profit positive">
+                        <div id="pintu-profit"
+                            class="profit positive">
                             ₹0.00
                         </div>
 
@@ -236,7 +313,8 @@
                             RETURN
                         </span>
 
-                        <div id="pintu-return" class="return positive">
+                        <div id="pintu-return"
+                            class="return positive">
                             0.00%
                         </div>
 
@@ -251,7 +329,8 @@
                         Today's Change
                     </span>
 
-                    <span id="pintu-daily" class="daily-change-value">
+                    <span id="pintu-daily"
+                        class="daily-change-value">
                         ₹0.00
                     </span>
 
@@ -259,13 +338,17 @@
 
 
                 <div class="mini-chart">
+
                     <div class="mini-chart-line"></div>
+
                 </div>
 
             </article>
 
 
-            <!-- AKSHAY -->
+            <!-- =================================================
+                 AKSHAY
+                 ================================================= -->
 
             <article class="investor-card">
 
@@ -279,7 +362,9 @@
 
                         <div>
 
-                            <h3>Akshay</h3>
+                            <h3>
+                                Akshay
+                            </h3>
 
                             <span class="investor-label">
                                 Investor
@@ -289,9 +374,13 @@
 
                     </div>
 
+
                     <div class="mini-live">
+
                         <span></span>
+
                         LIVE
+
                     </div>
 
                 </div>
@@ -303,7 +392,8 @@
                         CURRENT HOLDING
                     </span>
 
-                    <div id="akshay-value" class="holding-value">
+                    <div id="akshay-value"
+                        class="holding-value">
                         ₹0.00
                     </div>
 
@@ -318,7 +408,8 @@
                             NET PROFIT
                         </span>
 
-                        <div id="akshay-profit" class="profit positive">
+                        <div id="akshay-profit"
+                            class="profit positive">
                             ₹0.00
                         </div>
 
@@ -331,7 +422,8 @@
                             RETURN
                         </span>
 
-                        <div id="akshay-return" class="return positive">
+                        <div id="akshay-return"
+                            class="return positive">
                             0.00%
                         </div>
 
@@ -346,7 +438,8 @@
                         Today's Change
                     </span>
 
-                    <span id="akshay-daily" class="daily-change-value">
+                    <span id="akshay-daily"
+                        class="daily-change-value">
                         ₹0.00
                     </span>
 
@@ -354,13 +447,17 @@
 
 
                 <div class="mini-chart">
+
                     <div class="mini-chart-line purple-line"></div>
+
                 </div>
 
             </article>
 
 
-            <!-- RAJU -->
+            <!-- =================================================
+                 RAJU
+                 ================================================= -->
 
             <article class="investor-card">
 
@@ -374,7 +471,9 @@
 
                         <div>
 
-                            <h3>Raju</h3>
+                            <h3>
+                                Raju
+                            </h3>
 
                             <span class="investor-label">
                                 Investor
@@ -384,9 +483,13 @@
 
                     </div>
 
+
                     <div class="mini-live">
+
                         <span></span>
+
                         LIVE
+
                     </div>
 
                 </div>
@@ -398,7 +501,8 @@
                         CURRENT HOLDING
                     </span>
 
-                    <div id="raju-value" class="holding-value">
+                    <div id="raju-value"
+                        class="holding-value">
                         ₹0.00
                     </div>
 
@@ -413,7 +517,8 @@
                             NET PROFIT
                         </span>
 
-                        <div id="raju-profit" class="profit positive">
+                        <div id="raju-profit"
+                            class="profit positive">
                             ₹0.00
                         </div>
 
@@ -426,7 +531,8 @@
                             RETURN
                         </span>
 
-                        <div id="raju-return" class="return positive">
+                        <div id="raju-return"
+                            class="return positive">
                             0.00%
                         </div>
 
@@ -441,7 +547,8 @@
                         Today's Change
                     </span>
 
-                    <span id="raju-daily" class="daily-change-value">
+                    <span id="raju-daily"
+                        class="daily-change-value">
                         ₹0.00
                     </span>
 
@@ -449,7 +556,9 @@
 
 
                 <div class="mini-chart">
+
                     <div class="mini-chart-line green-line"></div>
+
                 </div>
 
             </article>
@@ -458,20 +567,25 @@
 
 
         <!-- =====================================================
-         TODAY
-         ===================================================== -->
+             TODAY
+             ===================================================== -->
 
         <section class="today-section">
 
             <div class="section-heading">
 
                 <div>
+
                     <span class="eyebrow">
                         DAILY TRACKING
                     </span>
 
-                    <h2>Today's Portfolio Update</h2>
+                    <h2>
+                        Today's Portfolio Update
+                    </h2>
+
                 </div>
+
 
                 <div class="calendar-icon">
                     TODAY
@@ -538,20 +652,25 @@
 
 
         <!-- =====================================================
-         CHART
-         ===================================================== -->
+             CHART
+             ===================================================== -->
 
         <section class="chart-section">
 
             <div class="section-heading">
 
                 <div>
+
                     <span class="eyebrow">
                         PERFORMANCE
                     </span>
 
-                    <h2>Portfolio Growth</h2>
+                    <h2>
+                        Portfolio Growth
+                    </h2>
+
                 </div>
+
 
                 <div class="chart-badge">
                     HISTORY
@@ -574,6 +693,7 @@
 
                 </div>
 
+
                 <div class="chart-wrapper">
 
                     <canvas id="growthChart"></canvas>
@@ -586,19 +706,23 @@
 
 
         <!-- =====================================================
-         HISTORY
-         ===================================================== -->
+             HISTORY
+             ===================================================== -->
 
         <section class="history-section">
 
             <div class="section-heading">
 
                 <div>
+
                     <span class="eyebrow">
                         DAILY RECORD
                     </span>
 
-                    <h2>Investment History</h2>
+                    <h2>
+                        Investment History
+                    </h2>
+
                 </div>
 
             </div>
@@ -614,17 +738,26 @@
 
                             <tr>
 
-                                <th>Date</th>
+                                <th>
+                                    Date
+                                </th>
 
-                                <th>Pintu</th>
+                                <th>
+                                    Pintu
+                                </th>
 
-                                <th>Akshay</th>
+                                <th>
+                                    Akshay
+                                </th>
 
-                                <th>Raju</th>
+                                <th>
+                                    Raju
+                                </th>
 
                             </tr>
 
                         </thead>
+
 
                         <tbody id="history-body"></tbody>
 
@@ -638,8 +771,8 @@
 
 
         <!-- =====================================================
-         ADMIN
-         ===================================================== -->
+             ADMIN
+             ===================================================== -->
 
         <section class="admin-section">
 
@@ -651,9 +784,12 @@
                         SECURE AREA
                     </span>
 
-                    <h2>Admin Controls</h2>
+                    <h2>
+                        Admin Controls
+                    </h2>
 
                 </div>
+
 
                 <div class="lock-icon">
                     🔒
@@ -662,9 +798,12 @@
             </div>
 
 
-            <!-- LOGIN -->
+            <!-- =================================================
+                 LOGIN
+                 ================================================= -->
 
-            <div id="login-section" class="admin-box">
+            <div id="login-section"
+                class="admin-box">
 
                 <div class="admin-box-title">
                     Admin Login
@@ -673,39 +812,54 @@
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="email">
                         Email
                     </label>
 
-                    <input id="email" type="email" placeholder="Admin email">
+                    <input id="email"
+                        type="email"
+                        placeholder="Admin email"
+                        autocomplete="username">
 
                 </div>
 
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="password">
                         Password
                     </label>
 
-                    <input id="password" type="password" placeholder="Password">
+                    <input id="password"
+                        type="password"
+                        placeholder="Password"
+                        autocomplete="current-password">
 
                 </div>
 
 
-                <button id="login-btn" class="primary-btn">
+                <button id="login-btn"
+                    class="primary-btn"
+                    type="button">
+
                     Login
+
                 </button>
 
 
-                <div id="login-message" class="admin-message"></div>
+                <div id="login-message"
+                    class="admin-message">
+                </div>
 
             </div>
 
 
-            <!-- ADMIN PANEL -->
+            <!-- =================================================
+                 ADMIN PANEL
+                 ================================================= -->
 
-            <div id="admin-panel" class="admin-box hidden">
+            <div id="admin-panel"
+                class="admin-box hidden">
 
                 <div class="admin-user-row">
 
@@ -721,61 +875,91 @@
 
                     </div>
 
-                    <button id="logout-btn" class="logout-btn">
+
+                    <button id="logout-btn"
+                        class="logout-btn"
+                        type="button">
+
                         Logout
+
                     </button>
 
                 </div>
 
 
                 <div class="admin-info-box">
-                    Enter each person's <strong>complete current holding</strong>.
-                    The ₹1,00,000 principal is already included in this amount.
+
+                    Enter each person's
+                    <strong>complete current holding</strong>.
+
+                    The ₹1,00,000 principal is already included
+                    in this amount.
+
                 </div>
 
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="pintu-input">
                         Pintu — Current Holding
                     </label>
 
-                    <input id="pintu-input" type="number" min="0" step="0.01" placeholder="Example: 288588">
+                    <input id="pintu-input"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Example: 288588">
 
                 </div>
 
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="akshay-input">
                         Akshay — Current Holding
                     </label>
 
-                    <input id="akshay-input" type="number" min="0" step="0.01" placeholder="Example: 294863">
+                    <input id="akshay-input"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Example: 294863">
 
                 </div>
 
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="raju-input">
                         Raju — Current Holding
                     </label>
 
-                    <input id="raju-input" type="number" min="0" step="0.01" placeholder="Example: 283965">
+                    <input id="raju-input"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Example: 283965">
 
                 </div>
 
 
-                <button id="update-btn" class="update-btn">
+                <button id="update-btn"
+                    class="update-btn"
+                    type="button">
+
                     Update Today's Values
+
                 </button>
 
 
-                <div id="alreadyUpdated" class="admin-message hidden"></div>
+                <div id="alreadyUpdated"
+                    class="admin-message hidden">
+                </div>
 
 
-                <div id="update-message" class="admin-message"></div>
+                <div id="update-message"
+                    class="admin-message">
+                </div>
 
             </div>
 
@@ -783,8 +967,8 @@
 
 
         <!-- =====================================================
-         FOOTER
-         ===================================================== -->
+             FOOTER
+             ===================================================== -->
 
         <footer>
 
@@ -803,7 +987,13 @@
     </div>
 
 
-    <script type="module" src="script.js"></script>
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
+
+    <script type="module"
+        src="script.js">
+    </script>
 
 </body>
 

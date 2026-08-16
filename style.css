@@ -2421,3 +2421,146 @@ footer span {
         max-width: 100%;
     }
 }
+
+/* ============================================================
+   OWNER / FOUNDER BRANDING
+   ============================================================ */
+
+.brand-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.owner-line {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 2px;
+}
+
+.owner-name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+
+    background: linear-gradient(
+        90deg,
+        #ffffff 0%,
+        #d9ffe9 45%,
+        #20d889 100%
+    );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow: 0 0 18px rgba(32, 216, 137, 0.18);
+}
+
+.owner-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 3px 8px;
+    border-radius: 999px;
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+
+    color: #20d889;
+
+    background: rgba(32, 216, 137, 0.08);
+    border: 1px solid rgba(32, 216, 137, 0.28);
+
+    box-shadow:
+        0 0 12px rgba(32, 216, 137, 0.08),
+        inset 0 0 10px rgba(32, 216, 137, 0.03);
+}
+
+.brand-subtitle {
+    margin-top: 3px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+}
+
+/* Subtle owner badge glow */
+.owner-badge::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    margin-right: 5px;
+
+    border-radius: 50%;
+    background: #20d889;
+
+    box-shadow: 0 0 7px rgba(32, 216, 137, 0.8);
+}
+
+
+/* ============================================================
+   MOBILE OWNER BRANDING
+   ============================================================ */
+
+@media (max-width: 650px) {
+
+    .owner-line {
+        gap: 7px;
+    }
+
+    .owner-name {
+        font-size: 14px;
+    }
+
+    .owner-badge {
+        padding: 3px 7px;
+        font-size: 8px;
+    }
+
+    .brand-subtitle {
+        font-size: 10px;
+    }
+}
+
+
+@media (max-width: 380px) {
+
+    .owner-name {
+        font-size: 13px;
+    }
+
+    .owner-badge {
+        padding: 2px 6px;
+        font-size: 7px;
+    }
+
+    .brand-subtitle {
+        font-size: 9px;
+    }
+}
+
+/* Fix: Keep ₹ icon and NSE Portfolio perfectly aligned */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    flex-shrink: 0;
+}
+
+.brand-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.brand-name {
+    line-height: 1.1;
+    margin: 0;
+}

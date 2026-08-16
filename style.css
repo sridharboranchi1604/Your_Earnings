@@ -1952,3 +1952,215 @@ footer span {
     }
 
 }
+
+/* ============================================================
+   MOBILE RESPONSIVE FIX
+   ============================================================ */
+
+@media (max-width: 650px) {
+
+    body {
+        overflow-x: hidden;
+    }
+
+    .app-shell {
+        width: calc(100% - 24px);
+        margin: 0 auto;
+    }
+
+    /* Header */
+    .topbar {
+        padding: 18px 0;
+    }
+
+    .topbar h1 {
+        font-size: 22px;
+    }
+
+    .topbar p {
+        font-size: 12px;
+    }
+
+    /* Portfolio Snapshot */
+    .snapshot-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .snapshot-card {
+        padding: 14px;
+        min-width: 0;
+    }
+
+    .snapshot-card:last-child {
+        grid-column: span 2;
+    }
+
+    .snapshot-value {
+        font-size: 18px;
+        white-space: nowrap;
+    }
+
+    .snapshot-label {
+        font-size: 11px;
+    }
+
+    .snapshot-sub {
+        font-size: 11px;
+    }
+
+    /* Investor cards */
+    .investor-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .investor-card {
+        padding: 18px;
+        min-width: 0;
+    }
+
+    .investor-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .investor-name {
+        font-size: 17px;
+    }
+
+    .investor-value {
+        font-size: 28px;
+        line-height: 1.15;
+        white-space: nowrap;
+    }
+
+    .investor-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .profit,
+    .return {
+        font-size: 14px;
+    }
+
+    .daily-change {
+        margin-top: 12px;
+        font-size: 13px;
+    }
+
+    /* Daily section */
+    .daily-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    /* Chart */
+    .chart-card {
+        padding: 14px;
+        overflow: hidden;
+    }
+
+    .chart-container {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    /* History */
+    .history-card {
+        padding: 14px;
+        overflow: hidden;
+    }
+
+    .history-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .history-table {
+        min-width: 600px;
+        white-space: nowrap;
+    }
+
+    /* Admin panel */
+    .admin-panel {
+        padding: 16px;
+    }
+
+    .admin-inputs {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .admin-inputs input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #update-btn,
+    #logout-btn,
+    #login-btn {
+        width: 100%;
+    }
+
+    /* Login */
+    #login-section {
+        padding: 18px;
+    }
+
+    #email,
+    #password {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Prevent text breaking into individual letters */
+    h1,
+    h2,
+    h3,
+    p,
+    span,
+    div {
+        overflow-wrap: normal;
+        word-break: normal;
+    }
+}
+
+
+/* Small phones */
+@media (max-width: 380px) {
+
+    .app-shell {
+        width: calc(100% - 18px);
+    }
+
+    .snapshot-grid {
+        gap: 8px;
+    }
+
+    .snapshot-card {
+        padding: 11px;
+    }
+
+    .snapshot-value {
+        font-size: 16px;
+    }
+
+    .investor-card {
+        padding: 15px;
+    }
+
+    .investor-value {
+        font-size: 24px;
+    }
+
+    .investor-details {
+        gap: 8px;
+    }
+}

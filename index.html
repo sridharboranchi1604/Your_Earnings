@@ -3,125 +3,143 @@
 
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Daily Numbers</title>
+    <title>NSE Portfolio</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;750;800&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <main class="container">
+    <div class="app-shell">
 
-        <!-- HEADER -->
+        <!-- =====================================================
+         HEADER
+         ===================================================== -->
 
-        <header class="header">
+        <header class="topbar">
 
-            <div class="icon">
-                📊
+            <div class="brand-area">
+
+                <div class="brand-icon">
+                    <span>₹</span>
+                </div>
+
+                <div>
+                    <h1>NSE Portfolio</h1>
+                    <p>Personal Investment Dashboard</p>
+                </div>
+
             </div>
 
-            <h1>
-                Your Earnings
-            </h1>
-
-            <p>
-                Daily updated totals
-            </p>
+            <div class="market-status">
+                <span class="status-dot"></span>
+                LIVE
+            </div>
 
         </header>
 
 
-        <!-- TOTAL CARDS -->
+        <!-- =====================================================
+         SYNC
+         ===================================================== -->
 
-        <section class="cards">
+        <div class="sync-row">
 
-            <div class="card">
+            <div class="sync-left">
+                <span class="sync-icon">↻</span>
+                <span id="last-updated">
+                    Waiting for latest update...
+                </span>
+            </div>
 
-                <div class="card-top">
+            <div class="dashboard-status">
+                Portfolio Tracking
+            </div>
 
-                    <div class="person-icon">
-                        P
-                    </div>
+        </div>
 
-                    <div>
-                        <h2 id="name1">
-                            Pintu
-                        </h2>
 
-                        <p>
-                            Total Value
-                        </p>
-                    </div>
+        <!-- =====================================================
+         PORTFOLIO SNAPSHOT
+         ===================================================== -->
 
+        <section class="snapshot-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="eyebrow">
+                        PORTFOLIO SNAPSHOT
+                    </span>
+
+                    <h2>Today's Overview</h2>
                 </div>
 
-                <div
-                    class="number"
-                    id="value1"
-                >
-                    0
+                <div class="snapshot-badge">
+                    LIVE
                 </div>
 
             </div>
 
 
-            <div class="card">
+            <div class="snapshot-grid">
 
-                <div class="card-top">
+                <div class="snapshot-card">
 
-                    <div class="person-icon">
-                        A
-                    </div>
+                    <span class="snapshot-label">
+                        TOP PERFORMER
+                    </span>
 
-                    <div>
-                        <h2 id="name2">
-                            Akshay
-                        </h2>
+                    <strong id="top-performer">
+                        —
+                    </strong>
 
-                        <p>
-                            Total Value
-                        </p>
-                    </div>
+                    <span id="top-performer-value" class="snapshot-sub">
+                        —
+                    </span>
 
                 </div>
 
-                <div
-                    class="number"
-                    id="value2"
-                >
-                    0
-                </div>
 
-            </div>
+                <div class="snapshot-card">
 
+                    <span class="snapshot-label">
+                        MARKET MOVEMENT
+                    </span>
 
-            <div class="card">
+                    <strong id="market-movement">
+                        —
+                    </strong>
 
-                <div class="card-top">
-
-                    <div class="person-icon">
-                        R
-                    </div>
-
-                    <div>
-                        <h2 id="name3">
-                            Raju
-                        </h2>
-
-                        <p>
-                            Total Value
-                        </p>
-                    </div>
+                    <span id="market-movement-sub" class="snapshot-sub">
+                        Today's movement
+                    </span>
 
                 </div>
 
-                <div
-                    class="number"
-                    id="value3"
-                >
-                    0
+
+                <div class="snapshot-card">
+                    <div class="snapshot-label">Last Sync</div>
+
+                    <div id="snapshot-last-sync" class="snapshot-value">
+                        —
+                    </div>
+
+                    <div id="snapshot-last-sync-exact" class="snapshot-sub">
+                        —
+                    </div>
                 </div>
 
             </div>
@@ -129,80 +147,383 @@
         </section>
 
 
-        <!-- LAST UPDATED -->
+        <!-- =====================================================
+         INVESTORS
+         ===================================================== -->
 
-        <div class="updated">
+        <section class="portfolio-section">
 
-            Last updated:
-
-            <span id="date">
-                Loading...
-            </span>
-
-        </div>
-
-
-        <!-- TODAY'S UPDATE -->
-
-        <section class="today-section">
-
-            <div class="section-title">
+            <div class="section-heading">
 
                 <div>
+                    <span class="eyebrow">
+                        INVESTMENTS
+                    </span>
 
-                    <h2>
-                        📅 Today's Update
-                    </h2>
+                    <h2>Portfolio Performance</h2>
+                </div>
 
-                    <p>
-                        Numbers added today
-                    </p>
+            </div>
+
+
+            <!-- PINTU -->
+
+            <article class="investor-card">
+
+                <div class="card-top">
+
+                    <div class="investor-info">
+
+                        <div class="avatar avatar-blue">
+                            P
+                        </div>
+
+                        <div>
+
+                            <h3>Pintu</h3>
+
+                            <span class="investor-label">
+                                Investor
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mini-live">
+                        <span></span>
+                        LIVE
+                    </div>
 
                 </div>
 
-                <span id="todayDate">
-                    --
-                </span>
+
+                <div class="holding-area">
+
+                    <span class="holding-label">
+                        CURRENT HOLDING
+                    </span>
+
+                    <div id="pintu-value" class="holding-value">
+                        ₹0.00
+                    </div>
+
+                </div>
+
+
+                <div class="performance-row">
+
+                    <div class="profit-box">
+
+                        <span class="small-label">
+                            NET PROFIT
+                        </span>
+
+                        <div id="pintu-profit" class="profit positive">
+                            ₹0.00
+                        </div>
+
+                    </div>
+
+
+                    <div class="return-box">
+
+                        <span class="small-label">
+                            RETURN
+                        </span>
+
+                        <div id="pintu-return" class="return positive">
+                            0.00%
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="daily-row">
+
+                    <span>
+                        Today's Change
+                    </span>
+
+                    <span id="pintu-daily" class="daily-change-value">
+                        ₹0.00
+                    </span>
+
+                </div>
+
+
+                <div class="mini-chart">
+                    <div class="mini-chart-line"></div>
+                </div>
+
+            </article>
+
+
+            <!-- AKSHAY -->
+
+            <article class="investor-card">
+
+                <div class="card-top">
+
+                    <div class="investor-info">
+
+                        <div class="avatar avatar-purple">
+                            A
+                        </div>
+
+                        <div>
+
+                            <h3>Akshay</h3>
+
+                            <span class="investor-label">
+                                Investor
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mini-live">
+                        <span></span>
+                        LIVE
+                    </div>
+
+                </div>
+
+
+                <div class="holding-area">
+
+                    <span class="holding-label">
+                        CURRENT HOLDING
+                    </span>
+
+                    <div id="akshay-value" class="holding-value">
+                        ₹0.00
+                    </div>
+
+                </div>
+
+
+                <div class="performance-row">
+
+                    <div class="profit-box">
+
+                        <span class="small-label">
+                            NET PROFIT
+                        </span>
+
+                        <div id="akshay-profit" class="profit positive">
+                            ₹0.00
+                        </div>
+
+                    </div>
+
+
+                    <div class="return-box">
+
+                        <span class="small-label">
+                            RETURN
+                        </span>
+
+                        <div id="akshay-return" class="return positive">
+                            0.00%
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="daily-row">
+
+                    <span>
+                        Today's Change
+                    </span>
+
+                    <span id="akshay-daily" class="daily-change-value">
+                        ₹0.00
+                    </span>
+
+                </div>
+
+
+                <div class="mini-chart">
+                    <div class="mini-chart-line purple-line"></div>
+                </div>
+
+            </article>
+
+
+            <!-- RAJU -->
+
+            <article class="investor-card">
+
+                <div class="card-top">
+
+                    <div class="investor-info">
+
+                        <div class="avatar avatar-green">
+                            R
+                        </div>
+
+                        <div>
+
+                            <h3>Raju</h3>
+
+                            <span class="investor-label">
+                                Investor
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mini-live">
+                        <span></span>
+                        LIVE
+                    </div>
+
+                </div>
+
+
+                <div class="holding-area">
+
+                    <span class="holding-label">
+                        CURRENT HOLDING
+                    </span>
+
+                    <div id="raju-value" class="holding-value">
+                        ₹0.00
+                    </div>
+
+                </div>
+
+
+                <div class="performance-row">
+
+                    <div class="profit-box">
+
+                        <span class="small-label">
+                            NET PROFIT
+                        </span>
+
+                        <div id="raju-profit" class="profit positive">
+                            ₹0.00
+                        </div>
+
+                    </div>
+
+
+                    <div class="return-box">
+
+                        <span class="small-label">
+                            RETURN
+                        </span>
+
+                        <div id="raju-return" class="return positive">
+                            0.00%
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="daily-row">
+
+                    <span>
+                        Today's Change
+                    </span>
+
+                    <span id="raju-daily" class="daily-change-value">
+                        ₹0.00
+                    </span>
+
+                </div>
+
+
+                <div class="mini-chart">
+                    <div class="mini-chart-line green-line"></div>
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+         TODAY
+         ===================================================== -->
+
+        <section class="today-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="eyebrow">
+                        DAILY TRACKING
+                    </span>
+
+                    <h2>Today's Portfolio Update</h2>
+                </div>
+
+                <div class="calendar-icon">
+                    TODAY
+                </div>
 
             </div>
 
 
             <div class="today-grid">
 
-                <div class="today-item">
+                <div class="today-card">
 
-                    <span id="todayName1">
+                    <div class="today-person">
+
+                        <span class="today-dot blue"></span>
+
                         Pintu
-                    </span>
 
-                    <strong id="todayValue1">
-                        +0
+                    </div>
+
+                    <strong id="today-pintu">
+                        ₹0.00
                     </strong>
 
                 </div>
 
 
-                <div class="today-item">
+                <div class="today-card">
 
-                    <span id="todayName2">
+                    <div class="today-person">
+
+                        <span class="today-dot purple"></span>
+
                         Akshay
-                    </span>
 
-                    <strong id="todayValue2">
-                        +0
+                    </div>
+
+                    <strong id="today-akshay">
+                        ₹0.00
                     </strong>
 
                 </div>
 
 
-                <div class="today-item">
+                <div class="today-card">
 
-                    <span id="todayName3">
+                    <div class="today-person">
+
+                        <span class="today-dot green"></span>
+
                         Raju
-                    </span>
 
-                    <strong id="todayValue3">
-                        +0
+                    </div>
+
+                    <strong id="today-raju">
+                        ₹0.00
                     </strong>
 
                 </div>
@@ -212,308 +533,273 @@
         </section>
 
 
-        <!-- =========================
-             PROGRESS CHART
-        ========================== -->
+        <!-- =====================================================
+         CHART
+         ===================================================== -->
 
         <section class="chart-section">
 
-            <div class="section-title">
+            <div class="section-heading">
 
                 <div>
+                    <span class="eyebrow">
+                        PERFORMANCE
+                    </span>
 
-                    <h2>
-                        📈 Progress
-                    </h2>
+                    <h2>Portfolio Growth</h2>
+                </div>
 
-                    <p>
-                        Total value over time
-                    </p>
-
+                <div class="chart-badge">
+                    HISTORY
                 </div>
 
             </div>
 
 
-            <div class="chart-wrapper">
+            <div class="chart-card">
 
-                <canvas id="progressChart"></canvas>
+                <div class="chart-header">
+
+                    <span class="chart-title">
+                        Holding Value Over Time
+                    </span>
+
+                    <span class="chart-subtitle">
+                        Complete current holding value
+                    </span>
+
+                </div>
+
+                <div class="chart-wrapper">
+
+                    <canvas id="growthChart"></canvas>
+
+                </div>
 
             </div>
 
         </section>
 
 
-        <!-- =========================
-             DAILY HISTORY
-        ========================== -->
+        <!-- =====================================================
+         HISTORY
+         ===================================================== -->
 
         <section class="history-section">
 
-            <div class="section-title">
+            <div class="section-heading">
 
                 <div>
+                    <span class="eyebrow">
+                        DAILY RECORD
+                    </span>
 
-                    <h2>
-                        📋 Daily History
-                    </h2>
-
-                    <p>
-                        Numbers added each day
-                    </p>
-
+                    <h2>Investment History</h2>
                 </div>
 
             </div>
 
 
-            <div class="history-table-wrapper">
+            <div class="history-card">
 
-                <table class="history-table">
+                <div class="table-scroll">
 
-                    <thead>
+                    <table>
 
-                        <tr>
+                        <thead>
 
-                            <th>
-                                Date
-                            </th>
+                            <tr>
 
-                            <th>
-                                Pintu
-                            </th>
+                                <th>Date</th>
 
-                            <th>
-                                Akshay
-                            </th>
+                                <th>Pintu</th>
 
-                            <th>
-                                Raju
-                            </th>
+                                <th>Akshay</th>
 
-                            <th>
-                                Total
-                            </th>
+                                <th>Raju</th>
 
-                        </tr>
+                            </tr>
 
-                    </thead>
+                        </thead>
 
+                        <tbody id="history-body"></tbody>
 
-                    <tbody id="historyBody">
+                    </table>
 
-                        <tr>
-
-                            <td
-                                colspan="5"
-                                class="empty-history"
-                            >
-                                Loading history...
-
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
+                </div>
 
             </div>
 
         </section>
 
 
-        <!-- =========================
-             ADMIN
-        ========================== -->
+        <!-- =====================================================
+         ADMIN
+         ===================================================== -->
 
-        <section
-            class="admin-section"
-            id="adminSection"
-        >
+        <section class="admin-section">
 
             <div class="admin-header">
 
-                <h2>
-                    🔐 Daily Update
-                </h2>
+                <div>
 
-                <p>
-                    Enter only today's new numbers
-                </p>
+                    <span class="eyebrow">
+                        SECURE AREA
+                    </span>
+
+                    <h2>Admin Controls</h2>
+
+                </div>
+
+                <div class="lock-icon">
+                    🔒
+                </div>
 
             </div>
 
 
             <!-- LOGIN -->
 
-            <div
-                class="login-box"
-                id="loginBox"
-            >
+            <div id="login-section" class="admin-box">
 
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Admin email"
-                    autocomplete="email"
-                >
+                <div class="admin-box-title">
+                    Admin Login
+                </div>
 
 
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Password"
-                    autocomplete="current-password"
-                >
+                <div class="input-group">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input id="email" type="email" placeholder="Admin email">
+
+                </div>
 
 
-                <button id="loginButton">
+                <div class="input-group">
+
+                    <label>
+                        Password
+                    </label>
+
+                    <input id="password" type="password" placeholder="Password">
+
+                </div>
+
+
+                <button id="login-btn" class="primary-btn">
                     Login
                 </button>
 
 
-                <p
-                    class="error"
-                    id="loginError"
-                ></p>
+                <div id="login-message" class="admin-message"></div>
 
             </div>
 
 
-            <!-- UPDATE BOX -->
+            <!-- ADMIN PANEL -->
 
-            <div
-                class="update-box"
-                id="updateBox"
-                style="display: none;"
-            >
+            <div id="admin-panel" class="admin-box hidden">
 
-                <div class="welcome">
+                <div class="admin-user-row">
 
-                    <span>
-                        Admin mode
-                    </span>
+                    <div>
 
-                    <button
-                        id="logoutButton"
-                        class="logout"
-                    >
+                        <span class="admin-label">
+                            ADMIN MODE
+                        </span>
+
+                        <strong>
+                            Portfolio Update Access
+                        </strong>
+
+                    </div>
+
+                    <button id="logout-btn" class="logout-btn">
                         Logout
                     </button>
 
                 </div>
 
 
-                <div
-                    id="alreadyUpdated"
-                    class="already-updated"
-                    style="display: none;"
-                >
-                    ✅ Today's numbers have already been added.
+                <div class="admin-info-box">
+                    Enter each person's <strong>complete current holding</strong>.
+                    The ₹1,00,000 principal is already included in this amount.
                 </div>
 
 
-                <div class="input-grid">
+                <div class="input-group">
 
+                    <label>
+                        Pintu — Current Holding
+                    </label>
 
-                    <div class="input-group">
-
-                        <label id="label1">
-                            Pintu
-                        </label>
-
-                        <input
-                            type="number"
-                            id="input1"
-                            min="0"
-                            step="any"
-                            placeholder="Today's number"
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label id="label2">
-                            Akshay
-                        </label>
-
-                        <input
-                            type="number"
-                            id="input2"
-                            min="0"
-                            step="any"
-                            placeholder="Today's number"
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label id="label3">
-                            Raju
-                        </label>
-
-                        <input
-                            type="number"
-                            id="input3"
-                            min="0"
-                            step="any"
-                            placeholder="Today's number"
-                        >
-
-                    </div>
+                    <input id="pintu-input" type="number" min="0" step="0.01" placeholder="Example: 288588">
 
                 </div>
 
 
-                <button
-                    class="update-button"
-                    id="updateButton"
-                >
-                    ➕ Add Today's Numbers
+                <div class="input-group">
+
+                    <label>
+                        Akshay — Current Holding
+                    </label>
+
+                    <input id="akshay-input" type="number" min="0" step="0.01" placeholder="Example: 294863">
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Raju — Current Holding
+                    </label>
+
+                    <input id="raju-input" type="number" min="0" step="0.01" placeholder="Example: 283965">
+
+                </div>
+
+
+                <button id="update-btn" class="update-btn">
+                    Update Today's Values
                 </button>
 
 
-                <p
-                    class="status"
-                    id="status"
-                ></p>
+                <div id="alreadyUpdated" class="admin-message hidden"></div>
+
+
+                <div id="update-message" class="admin-message"></div>
 
             </div>
 
         </section>
 
 
-        <!-- FOOTER -->
+        <!-- =====================================================
+         FOOTER
+         ===================================================== -->
 
         <footer>
 
+            <div class="footer-line"></div>
+
             <p>
-                Daily Numbers
+                NSE Portfolio Dashboard
             </p>
+
+            <span>
+                Private investment tracking
+            </span>
 
         </footer>
 
-    </main>
+    </div>
 
 
-    <!-- CHART.JS -->
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/chart.js"
-    ></script>
-
-
-    <!-- FIREBASE / APP SCRIPT -->
-
-    <script
-        type="module"
-        src="script.js"
-    ></script>
+    <script type="module" src="script.js"></script>
 
 </body>
 

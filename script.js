@@ -1,4 +1,10 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+// ============================================================
+// FIREBASE IMPORTS
+// ============================================================
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 
 import {
     getDatabase,
@@ -10,14 +16,14 @@ import {
 import {
     getAuth,
     signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut
+    signOut,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
 
-// ==========================================
+// ============================================================
 // FIREBASE CONFIG
-// ==========================================
+// ============================================================
 
 const firebaseConfig = {
     apiKey: "AIzaSyBceA9YFgQL-Ddq5_OdW1x6upz0nrE8Z2I",
@@ -31,9 +37,9 @@ const firebaseConfig = {
 };
 
 
-// ==========================================
-// FIREBASE INITIALIZATION
-// ==========================================
+// ============================================================
+// INITIALIZE FIREBASE
+// ============================================================
 
 const app = initializeApp(firebaseConfig);
 
@@ -41,127 +47,659 @@ const database = getDatabase(app);
 
 const auth = getAuth(app);
 
-const numbersRef = ref(database, "numbers");
+const investmentsRef =
+    ref(database, "investments");
 
 
-// ==========================================
-// ORIGINAL / STARTING TOTALS
-// ==========================================
-//
-// These are your original totals.
-// They are used automatically when Firebase
-// does not yet contain person1/person2/person3.
-//
+// ============================================================
+// CONSTANTS
+// ============================================================
 
-const startingTotals = {
-    person1: 288588,   // Pintu
-    person2: 294863,   // Akshay
-    person3: 283965    // Raju
-};
+const PRINCIPAL = 100000;
+
+let lastSyncTimestamp = null;
+let lastSyncInterval = null;
 
 
-// ==========================================
-// PEOPLE
-// ==========================================
+// ============================================================
+// EXACT DATE + TIME
+// ============================================================
 
-const people = [
-    {
-        name: "Pintu",
-        valueId: "value1",
-        inputId: "input1",
-        labelId: "label1",
-        todayValueId: "todayValue1",
-        todayNameId: "todayName1"
-    },
+function formatExactDateTime(timestamp) {
 
-    {
-        name: "Akshay",
-        valueId: "value2",
-        inputId: "input2",
-        labelId: "label2",
-        todayValueId: "todayValue2",
-        todayNameId: "todayName2"
-    },
-
-    {
-        name: "Raju",
-        valueId: "value3",
-        inputId: "input3",
-        labelId: "label3",
-        todayValueId: "todayValue3",
-        todayNameId: "todayName3"
-    }
-];
-
-
-// ==========================================
-// SET NAMES
-// ==========================================
-
-people.forEach((person) => {
-
-    const label = document.getElementById(person.labelId);
-
-    if (label) {
-        label.textContent = person.name;
+    if (
+        timestamp === null ||
+        timestamp === undefined ||
+        timestamp === ""
+    ) {
+        return "—";
     }
 
-    const todayName =
-        document.getElementById(person.todayNameId);
+    const numericTimestamp =
+        Number(timestamp);
 
-    if (todayName) {
-        todayName.textContent = person.name;
+    if (
+        !Number.isFinite(numericTimestamp) ||
+        numericTimestamp <= 0
+    ) {
+        return "—";
     }
 
-});
+    const date =
+        new Date(numericTimestamp);
 
+    if (isNaN(date.getTime())) {
+        return "—";
+    }
 
-// ==========================================
-// INDIA DATE KEY
-// ==========================================
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true
+        }
+    );
 
-function getIndiaDateKey() {
-
-    const parts =
-        new Intl.DateTimeFormat(
-            "en-US",
-            {
-                timeZone: "Asia/Kolkata",
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit"
-            }
-        ).formatToParts(new Date());
-
-    const result = {};
-
-    parts.forEach((part) => {
-        result[part.type] = part.value;
-    });
-
-    return `${result.year}-${result.month}-${result.day}`;
 }
 
 
-// ==========================================
-// FORMAT DATE
-// ==========================================
+// ============================================================
+// TIME AGO
+// ============================================================
 
-function formatDate(dateKey) {
+function formatTimeAgo(timestamp) {
 
-    if (!dateKey) {
-        return "--";
+    if (
+        timestamp === null ||
+        timestamp === undefined ||
+        timestamp === ""
+    ) {
+        return "—";
     }
 
-    const [year, month, day] =
-        dateKey.split("-");
+    const numericTimestamp =
+        Number(timestamp);
+
+    if (
+        !Number.isFinite(numericTimestamp) ||
+        numericTimestamp <= 0
+    ) {
+        return "—";
+    }
+
+    const now =
+        Date.now();
+
+    let difference =
+        Math.floor(
+            (now - numericTimestamp) / 1000
+        );
+
+    if (difference < 0) {
+        difference = 0;
+    }
+
+
+    // Less than 10 seconds
+    if (difference < 10) {
+
+        return "Updated just now";
+
+    }
+
+
+    // Seconds
+    if (difference < 60) {
+
+        return `Updated ${difference} seconds ago`;
+
+    }
+
+
+    const minutes =
+        Math.floor(
+            difference / 60
+        );
+
+
+    // Minutes
+    if (minutes < 60) {
+
+        return (
+            `Updated ${minutes} ` +
+            `${minutes === 1 ? "minute" : "minutes"} ago`
+        );
+
+    }
+
+
+    const hours =
+        Math.floor(
+            minutes / 60
+        );
+
+
+    // Hours
+    if (hours < 24) {
+
+        return (
+            `Updated ${hours} ` +
+            `${hours === 1 ? "hour" : "hours"} ago`
+        );
+
+    }
+
+
+    const days =
+        Math.floor(
+            hours / 24
+        );
+
+
+    // Days
+    return (
+        `Updated ${days} ` +
+        `${days === 1 ? "day" : "days"} ago`
+    );
+
+}
+
+
+// ============================================================
+// LAST SYNC DISPLAY
+// ============================================================
+
+function updateLastSyncDisplay(timestamp) {
+
+    const relativeElement =
+        document.getElementById(
+            "snapshot-last-sync"
+        );
+
+    const exactElement =
+        document.getElementById(
+            "snapshot-last-sync-exact"
+        );
+
+
+    if (
+        !relativeElement ||
+        !exactElement
+    ) {
+        return;
+    }
+
+
+    // --------------------------------------------------------
+    // No timestamp
+    // --------------------------------------------------------
+
+    if (
+        timestamp === null ||
+        timestamp === undefined ||
+        timestamp === ""
+    ) {
+
+        relativeElement.textContent =
+            "—";
+
+        exactElement.textContent =
+            "No sync time available";
+
+        lastSyncTimestamp = null;
+
+        if (lastSyncInterval) {
+
+            clearInterval(
+                lastSyncInterval
+            );
+
+            lastSyncInterval = null;
+
+        }
+
+        return;
+
+    }
+
+
+    const numericTimestamp =
+        Number(timestamp);
+
+
+    // --------------------------------------------------------
+    // Invalid timestamp
+    // --------------------------------------------------------
+
+    if (
+        !Number.isFinite(numericTimestamp) ||
+        numericTimestamp <= 0
+    ) {
+
+        relativeElement.textContent =
+            "—";
+
+        exactElement.textContent =
+            "No sync time available";
+
+        lastSyncTimestamp = null;
+
+        if (lastSyncInterval) {
+
+            clearInterval(
+                lastSyncInterval
+            );
+
+            lastSyncInterval = null;
+
+        }
+
+        return;
+
+    }
+
+
+    const date =
+        new Date(numericTimestamp);
+
+
+    if (isNaN(date.getTime())) {
+
+        relativeElement.textContent =
+            "—";
+
+        exactElement.textContent =
+            "No sync time available";
+
+        lastSyncTimestamp = null;
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // Store timestamp
+    // --------------------------------------------------------
+
+    lastSyncTimestamp =
+        numericTimestamp;
+
+
+    // --------------------------------------------------------
+    // Initial display
+    // --------------------------------------------------------
+
+    relativeElement.textContent =
+        formatTimeAgo(
+            lastSyncTimestamp
+        );
+
+    exactElement.textContent =
+        formatExactDateTime(
+            lastSyncTimestamp
+        );
+
+
+    // --------------------------------------------------------
+    // Clear previous interval
+    // --------------------------------------------------------
+
+    if (lastSyncInterval) {
+
+        clearInterval(
+            lastSyncInterval
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // Update every 30 seconds
+    // --------------------------------------------------------
+
+    lastSyncInterval =
+        setInterval(
+            () => {
+
+                if (!lastSyncTimestamp) {
+                    return;
+                }
+
+                relativeElement.textContent =
+                    formatTimeAgo(
+                        lastSyncTimestamp
+                    );
+
+            },
+            30000
+        );
+
+}
+
+
+// ============================================================
+// DOM ELEMENTS
+// ============================================================
+
+const lastUpdated =
+    document.getElementById(
+        "last-updated"
+    );
+
+
+// ============================================================
+// PINTU
+// ============================================================
+
+const pintuValue =
+    document.getElementById(
+        "pintu-value"
+    );
+
+const pintuProfit =
+    document.getElementById(
+        "pintu-profit"
+    );
+
+const pintuReturn =
+    document.getElementById(
+        "pintu-return"
+    );
+
+const pintuDaily =
+    document.getElementById(
+        "pintu-daily"
+    );
+
+const todayPintu =
+    document.getElementById(
+        "today-pintu"
+    );
+
+
+// ============================================================
+// AKSHAY
+// ============================================================
+
+const akshayValue =
+    document.getElementById(
+        "akshay-value"
+    );
+
+const akshayProfit =
+    document.getElementById(
+        "akshay-profit"
+    );
+
+const akshayReturn =
+    document.getElementById(
+        "akshay-return"
+    );
+
+const akshayDaily =
+    document.getElementById(
+        "akshay-daily"
+    );
+
+const todayAkshay =
+    document.getElementById(
+        "today-akshay"
+    );
+
+
+// ============================================================
+// RAJU
+// ============================================================
+
+const rajuValue =
+    document.getElementById(
+        "raju-value"
+    );
+
+const rajuProfit =
+    document.getElementById(
+        "raju-profit"
+    );
+
+const rajuReturn =
+    document.getElementById(
+        "raju-return"
+    );
+
+const rajuDaily =
+    document.getElementById(
+        "raju-daily"
+    );
+
+const todayRaju =
+    document.getElementById(
+        "today-raju"
+    );
+
+
+// ============================================================
+// HISTORY
+// ============================================================
+
+const historyBody =
+    document.getElementById(
+        "history-body"
+    );
+
+
+// ============================================================
+// CHART
+// ============================================================
+
+const chartCanvas =
+    document.getElementById(
+        "growthChart"
+    );
+
+
+// ============================================================
+// LOGIN
+// ============================================================
+
+const loginSection =
+    document.getElementById(
+        "login-section"
+    );
+
+const emailInput =
+    document.getElementById(
+        "email"
+    );
+
+const passwordInput =
+    document.getElementById(
+        "password"
+    );
+
+const loginButton =
+    document.getElementById(
+        "login-btn"
+    );
+
+const loginMessage =
+    document.getElementById(
+        "login-message"
+    );
+
+
+// ============================================================
+// ADMIN
+// ============================================================
+
+const adminPanel =
+    document.getElementById(
+        "admin-panel"
+    );
+
+const logoutButton =
+    document.getElementById(
+        "logout-btn"
+    );
+
+const pintuInput =
+    document.getElementById(
+        "pintu-input"
+    );
+
+const akshayInput =
+    document.getElementById(
+        "akshay-input"
+    );
+
+const rajuInput =
+    document.getElementById(
+        "raju-input"
+    );
+
+const updateButton =
+    document.getElementById(
+        "update-btn"
+    );
+
+const updateMessage =
+    document.getElementById(
+        "update-message"
+    );
+
+
+// ============================================================
+// SNAPSHOT
+// ============================================================
+
+const topPerformer =
+    document.getElementById(
+        "top-performer"
+    );
+
+const topPerformerValue =
+    document.getElementById(
+        "top-performer-value"
+    );
+
+const marketMovement =
+    document.getElementById(
+        "market-movement"
+    );
+
+const marketMovementSub =
+    document.getElementById(
+        "market-movement-sub"
+    );
+
+
+// ============================================================
+// GLOBAL VARIABLES
+// ============================================================
+
+let currentData = null;
+
+let growthChart = null;
+
+
+// ============================================================
+// CURRENCY
+// ============================================================
+
+function formatCurrency(value) {
+
+    return new Intl.NumberFormat(
+        "en-IN",
+        {
+            style: "currency",
+            currency: "INR",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    ).format(
+        Number(value) || 0
+    );
+
+}
+
+
+// ============================================================
+// PERCENTAGE
+// ============================================================
+
+function formatPercentage(value) {
+
+    return (
+        `${(
+            Number(value) || 0
+        ).toFixed(2)}%`
+    );
+
+}
+
+
+// ============================================================
+// TODAY
+// ============================================================
+
+function getTodayDate() {
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return (
+        `${year}-${month}-${day}`
+    );
+
+}
+
+
+// ============================================================
+// DATE FORMAT
+// ============================================================
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+        return "";
+    }
 
     const date =
         new Date(
-            Number(year),
-            Number(month) - 1,
-            Number(day)
+            `${dateString}T00:00:00`
         );
+
+    if (
+        isNaN(
+            date.getTime()
+        )
+    ) {
+        return dateString;
+    }
 
     return date.toLocaleDateString(
         "en-IN",
@@ -171,337 +709,1147 @@ function formatDate(dateKey) {
             year: "numeric"
         }
     );
+
 }
 
 
-// ==========================================
-// FORMAT NUMBER
-// ==========================================
+// ============================================================
+// DATE + TIME
+// ============================================================
 
-function formatNumber(value) {
+function formatDateTime(timestamp) {
 
-    const number =
-        Number(value || 0);
+    return formatExactDateTime(
+        timestamp
+    );
 
-    return number.toLocaleString(
-        "en-IN",
+}
+
+
+// ============================================================
+// NUMBER ANIMATION
+// ============================================================
+
+function animateNumber(
+    element,
+    targetValue,
+    duration = 1400
+) {
+
+    if (!element) {
+        return;
+    }
+
+    const target =
+        Number(targetValue) || 0;
+
+
+    if (element._animationFrame) {
+
+        cancelAnimationFrame(
+            element._animationFrame
+        );
+
+    }
+
+
+    const startValue = 0;
+
+    const startTime =
+        performance.now();
+
+
+    function animate(
+        currentTime
+    ) {
+
+        const elapsed =
+            currentTime -
+            startTime;
+
+        const progress =
+            Math.min(
+                elapsed / duration,
+                1
+            );
+
+        const easedProgress =
+            1 -
+            Math.pow(
+                1 - progress,
+                3
+            );
+
+        const currentValue =
+            startValue +
+            (
+                target -
+                startValue
+            ) *
+            easedProgress;
+
+
+        element.textContent =
+            formatCurrency(
+                currentValue
+            );
+
+
+        if (progress < 1) {
+
+            element._animationFrame =
+                requestAnimationFrame(
+                    animate
+                );
+
+        }
+        else {
+
+            element.textContent =
+                formatCurrency(
+                    target
+                );
+
+            element._animationFrame =
+                null;
+
+        }
+
+    }
+
+
+    element.textContent =
+        formatCurrency(0);
+
+
+    element._animationFrame =
+        requestAnimationFrame(
+            animate
+        );
+
+}
+
+
+// ============================================================
+// HOLDING DISPLAY
+// ============================================================
+
+function updateHoldingDisplay(
+    element,
+    value
+) {
+
+    animateNumber(
+        element,
+        value,
+        1500
+    );
+
+}
+
+
+// ============================================================
+// GET HOLDING
+// ============================================================
+
+function getHolding(
+    data,
+    person
+) {
+
+    if (!data) {
+        return 0;
+    }
+
+    return Number(
+        data[person]
+    ) || 0;
+
+}
+
+
+// ============================================================
+// VALID HISTORY DATE
+// ============================================================
+
+function isValidHistoryDate(
+    date
+) {
+
+    return /^\d{4}-\d{2}-\d{2}$/.test(
+        date
+    );
+
+}
+
+
+// ============================================================
+// GET HISTORY DATES
+// ============================================================
+
+function getHistoryDates(
+    history
+) {
+
+    if (!history) {
+        return [];
+    }
+
+    return Object.keys(history)
+        .filter(
+            isValidHistoryDate
+        )
+        .sort();
+
+}
+
+
+// ============================================================
+// LATEST HISTORY DATE
+// ============================================================
+
+function getLatestHistoryDate(
+    history
+) {
+
+    const dates =
+        getHistoryDates(
+            history
+        );
+
+    if (!dates.length) {
+        return null;
+    }
+
+    return dates[
+        dates.length - 1
+    ];
+
+}
+
+
+// ============================================================
+// PREVIOUS HOLDING
+// ============================================================
+
+function getPreviousValue(
+    history,
+    currentDate,
+    person
+) {
+
+    const dates =
+        getHistoryDates(
+            history
+        );
+
+    const currentIndex =
+        dates.indexOf(
+            currentDate
+        );
+
+
+    if (currentIndex <= 0) {
+        return null;
+    }
+
+
+    const previousDate =
+        dates[
+            currentIndex - 1
+        ];
+
+
+    const previousRecord =
+        history[
+            previousDate
+        ];
+
+
+    if (
+        !previousRecord ||
+        previousRecord[person] === undefined
+    ) {
+
+        return null;
+
+    }
+
+
+    return Number(
+        previousRecord[person]
+    );
+
+}
+
+
+// ============================================================
+// DAILY CHANGE
+// ============================================================
+
+function setDailyChange(
+    element,
+    change
+) {
+
+    if (!element) {
+        return;
+    }
+
+
+    element.classList.remove(
+        "positive",
+        "negative",
+        "change-positive",
+        "change-negative"
+    );
+
+
+    change =
+        Number(change) || 0;
+
+
+    if (change > 0) {
+
+        element.textContent =
+            `+${formatCurrency(change)}`;
+
+        element.classList.add(
+            "positive",
+            "change-positive"
+        );
+
+    }
+    else if (change < 0) {
+
+        element.textContent =
+            formatCurrency(change);
+
+        element.classList.add(
+            "negative",
+            "change-negative"
+        );
+
+    }
+    else {
+
+        element.textContent =
+            "₹0.00";
+
+    }
+
+}
+
+
+// ============================================================
+// UPDATE PERSON CARD
+// ============================================================
+
+function updatePersonCard(
+    person,
+    holding,
+    previousHolding
+) {
+
+    holding =
+        Number(holding) || 0;
+
+
+    // Current holding already includes ₹1,00,000 principal.
+    const profit =
+        holding -
+        PRINCIPAL;
+
+
+    const returnPercentage =
+        (
+            profit /
+            PRINCIPAL
+        ) *
+        100;
+
+
+    let dailyChange = 0;
+
+
+    if (
+        previousHolding !== null &&
+        previousHolding !== undefined
+    ) {
+
+        dailyChange =
+            holding -
+            Number(previousHolding);
+
+    }
+
+
+    // --------------------------------------------------------
+    // PINTU
+    // --------------------------------------------------------
+
+    if (person === "person1") {
+
+        updateHoldingDisplay(
+            pintuValue,
+            holding
+        );
+
+
+        if (pintuProfit) {
+
+            pintuProfit.textContent =
+                formatCurrency(
+                    profit
+                );
+
+            pintuProfit.classList.toggle(
+                "positive",
+                profit >= 0
+            );
+
+            pintuProfit.classList.toggle(
+                "negative",
+                profit < 0
+            );
+
+        }
+
+
+        if (pintuReturn) {
+
+            pintuReturn.textContent =
+                formatPercentage(
+                    returnPercentage
+                );
+
+        }
+
+
+        setDailyChange(
+            pintuDaily,
+            dailyChange
+        );
+
+
+        if (todayPintu) {
+
+            updateHoldingDisplay(
+                todayPintu,
+                holding
+            );
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // AKSHAY
+    // --------------------------------------------------------
+
+    if (person === "person2") {
+
+        updateHoldingDisplay(
+            akshayValue,
+            holding
+        );
+
+
+        if (akshayProfit) {
+
+            akshayProfit.textContent =
+                formatCurrency(
+                    profit
+                );
+
+            akshayProfit.classList.toggle(
+                "positive",
+                profit >= 0
+            );
+
+            akshayProfit.classList.toggle(
+                "negative",
+                profit < 0
+            );
+
+        }
+
+
+        if (akshayReturn) {
+
+            akshayReturn.textContent =
+                formatPercentage(
+                    returnPercentage
+                );
+
+        }
+
+
+        setDailyChange(
+            akshayDaily,
+            dailyChange
+        );
+
+
+        if (todayAkshay) {
+
+            updateHoldingDisplay(
+                todayAkshay,
+                holding
+            );
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // RAJU
+    // --------------------------------------------------------
+
+    if (person === "person3") {
+
+        updateHoldingDisplay(
+            rajuValue,
+            holding
+        );
+
+
+        if (rajuProfit) {
+
+            rajuProfit.textContent =
+                formatCurrency(
+                    profit
+                );
+
+            rajuProfit.classList.toggle(
+                "positive",
+                profit >= 0
+            );
+
+            rajuProfit.classList.toggle(
+                "negative",
+                profit < 0
+            );
+
+        }
+
+
+        if (rajuReturn) {
+
+            rajuReturn.textContent =
+                formatPercentage(
+                    returnPercentage
+                );
+
+        }
+
+
+        setDailyChange(
+            rajuDaily,
+            dailyChange
+        );
+
+
+        if (todayRaju) {
+
+            updateHoldingDisplay(
+                todayRaju,
+                holding
+            );
+
+        }
+
+    }
+
+}
+
+
+// ============================================================
+// MAIN DISPLAY
+// ============================================================
+
+function updateMainDisplay(
+    data
+) {
+
+    if (!data) {
+        return;
+    }
+
+
+    const pintuHolding =
+        getHolding(
+            data,
+            "person1"
+        );
+
+    const akshayHolding =
+        getHolding(
+            data,
+            "person2"
+        );
+
+    const rajuHolding =
+        getHolding(
+            data,
+            "person3"
+        );
+
+
+    const history =
+        data.history || {};
+
+
+    const latestDate =
+        getLatestHistoryDate(
+            history
+        );
+
+
+    let pintuPrevious = null;
+    let akshayPrevious = null;
+    let rajuPrevious = null;
+
+
+    if (latestDate) {
+
+        pintuPrevious =
+            getPreviousValue(
+                history,
+                latestDate,
+                "person1"
+            );
+
+        akshayPrevious =
+            getPreviousValue(
+                history,
+                latestDate,
+                "person2"
+            );
+
+        rajuPrevious =
+            getPreviousValue(
+                history,
+                latestDate,
+                "person3"
+            );
+
+    }
+
+
+    updatePersonCard(
+        "person1",
+        pintuHolding,
+        pintuPrevious
+    );
+
+    updatePersonCard(
+        "person2",
+        akshayHolding,
+        akshayPrevious
+    );
+
+    updatePersonCard(
+        "person3",
+        rajuHolding,
+        rajuPrevious
+    );
+
+
+    // --------------------------------------------------------
+    // EXACT LAST UPDATED
+    // --------------------------------------------------------
+
+    let timestamp = null;
+
+
+    if (
+        latestDate &&
+        history[latestDate]?.updatedAt
+    ) {
+
+        timestamp =
+            history[latestDate].updatedAt;
+
+    }
+
+
+    if (
+        !timestamp &&
+        data.lastUpdatedAt
+    ) {
+
+        timestamp =
+            data.lastUpdatedAt;
+
+    }
+
+
+    if (lastUpdated) {
+
+        if (timestamp) {
+
+            lastUpdated.textContent =
+                `Last updated: ${formatDateTime(timestamp)}`;
+
+        }
+        else if (latestDate) {
+
+            lastUpdated.textContent =
+                `Last updated: ${formatDate(latestDate)}`;
+
+        }
+        else {
+
+            lastUpdated.textContent =
+                "Waiting for latest update...";
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // SNAPSHOT
+    // --------------------------------------------------------
+
+    updateSnapshot(
+        data
+    );
+
+}
+
+
+// ============================================================
+// SNAPSHOT
+// ============================================================
+
+function updateSnapshot(
+    data
+) {
+
+    if (!data) {
+        return;
+    }
+
+
+    const people = [
+
         {
-            maximumFractionDigits: 2
+            name: "Pintu",
+            person: "person1",
+            holding:
+                getHolding(
+                    data,
+                    "person1"
+                )
+        },
+
+        {
+            name: "Akshay",
+            person: "person2",
+            holding:
+                getHolding(
+                    data,
+                    "person2"
+                )
+        },
+
+        {
+            name: "Raju",
+            person: "person3",
+            holding:
+                getHolding(
+                    data,
+                    "person3"
+                )
+        }
+
+    ];
+
+
+    // --------------------------------------------------------
+    // TOP PERFORMER
+    // --------------------------------------------------------
+
+    people.forEach(
+        person => {
+
+            person.profit =
+                person.holding -
+                PRINCIPAL;
+
+            person.return =
+                (
+                    person.profit /
+                    PRINCIPAL
+                ) *
+                100;
+
         }
     );
-}
 
 
-// ==========================================
-// CHART
-// ==========================================
-
-let progressChart = null;
-
-
-// ==========================================
-// LOAD DATABASE
-// ==========================================
-
-onValue(
-    numbersRef,
-    (snapshot) => {
-
-        const data =
-            snapshot.val() || {};
+    people.sort(
+        (a, b) =>
+            b.return -
+            a.return
+    );
 
 
-        // ==================================
-        // TOTAL VALUES
-        // ==================================
+    const best =
+        people[0];
+
+
+    if (
+        topPerformer &&
+        best
+    ) {
+
+        topPerformer.textContent =
+            best.name;
+
+    }
+
+
+    if (
+        topPerformerValue &&
+        best
+    ) {
+
+        topPerformerValue.textContent =
+            `${formatPercentage(best.return)} return`;
+
+    }
+
+
+    // --------------------------------------------------------
+    // DAILY MARKET MOVEMENT
+    // --------------------------------------------------------
+
+    const history =
+        data.history || {};
+
+
+    const latestDate =
+        getLatestHistoryDate(
+            history
+        );
+
+
+    let up = 0;
+    let down = 0;
+    let unchanged = 0;
+
+
+    if (latestDate) {
 
         people.forEach(
-            (person, index) => {
+            person => {
 
-                const firebaseKey =
-                    `person${index + 1}`;
-
-
-                // If Firebase has a value,
-                // use it.
-                //
-                // Otherwise use original total.
-
-                const total =
-                    data[firebaseKey] !== undefined
-                        ? Number(data[firebaseKey])
-                        : startingTotals[firebaseKey];
-
-
-                const element =
-                    document.getElementById(
-                        person.valueId
+                const previous =
+                    getPreviousValue(
+                        history,
+                        latestDate,
+                        person.person
                     );
 
 
-                if (element) {
+                if (
+                    previous === null
+                ) {
 
-                    element.textContent =
-                        formatNumber(total);
+                    return;
+
+                }
+
+
+                const change =
+                    person.holding -
+                    previous;
+
+
+                if (change > 0) {
+
+                    up++;
+
+                }
+                else if (change < 0) {
+
+                    down++;
+
+                }
+                else {
+
+                    unchanged++;
 
                 }
 
             }
         );
 
-
-        // ==================================
-        // LAST UPDATED
-        // ==================================
-
-        const dateElement =
-            document.getElementById("date");
+    }
 
 
-        if (data.lastUpdated) {
+    if (marketMovement) {
 
-            dateElement.textContent =
-                formatDate(data.lastUpdated);
+        if (
+            up > 0 &&
+            down === 0
+        ) {
 
-        } else {
+            marketMovement.textContent =
+                "Positive";
 
-            dateElement.textContent =
-                "Not updated yet";
+            marketMovement.className =
+                "positive";
 
         }
+        else if (
+            down > 0 &&
+            up === 0
+        ) {
 
+            marketMovement.textContent =
+                "Negative";
 
-        // ==================================
-        // TODAY
-        // ==================================
-
-        const todayKey =
-            getIndiaDateKey();
-
-
-        const todayData =
-            data.history &&
-            data.history[todayKey];
-
-
-        if (todayData) {
-
-            people.forEach(
-                (person, index) => {
-
-                    const firebaseKey =
-                        `person${index + 1}`;
-
-
-                    const value =
-                        Number(
-                            todayData[firebaseKey] || 0
-                        );
-
-
-                    const element =
-                        document.getElementById(
-                            person.todayValueId
-                        );
-
-
-                    if (element) {
-
-                        element.textContent =
-                            `+${formatNumber(value)}`;
-
-                    }
-
-                }
-            );
-
-        } else {
-
-            people.forEach(
-                (person) => {
-
-                    const element =
-                        document.getElementById(
-                            person.todayValueId
-                        );
-
-
-                    if (element) {
-
-                        element.textContent =
-                            "+0";
-
-                    }
-
-                }
-            );
+            marketMovement.className =
+                "negative";
 
         }
+        else if (
+            up === 0 &&
+            down === 0
+        ) {
 
+            marketMovement.textContent =
+                "No change";
 
-        // ==================================
-        // TODAY DATE
-        // ==================================
-
-        const todayDateElement =
-            document.getElementById(
-                "todayDate"
-            );
-
-
-        if (todayDateElement) {
-
-            todayDateElement.textContent =
-                formatDate(todayKey);
+            marketMovement.className =
+                "";
 
         }
+        else {
 
+            marketMovement.textContent =
+                "Mixed";
 
-        // ==================================
-        // HISTORY
-        // ==================================
+            marketMovement.className =
+                "";
 
-        buildHistory(
-            data.history || {}
-        );
-
-
-        // ==================================
-        // CHART
-        // ==================================
-
-        buildChart(
-            data.history || {}
-        );
-
-
-        // ==================================
-        // ADMIN STATUS
-        // ==================================
-
-        updateAdminTodayStatus(data);
-
-    },
-
-    (error) => {
-
-        console.error(
-            "Firebase read error:",
-            error
-        );
+        }
 
     }
-);
 
 
-// ==========================================
-// BUILD HISTORY TABLE
-// ==========================================
+    if (marketMovementSub) {
 
-function buildHistory(history) {
+        marketMovementSub.textContent =
+            `${up} up • ${down} down • ${unchanged} unchanged`;
 
-    const historyBody =
-        document.getElementById(
-            "historyBody"
-        );
+    }
 
+
+    // --------------------------------------------------------
+    // SNAPSHOT LAST SYNC
+    // --------------------------------------------------------
+
+    let timestamp = null;
+
+
+    if (
+        latestDate &&
+        history[latestDate]?.updatedAt
+    ) {
+
+        timestamp =
+            history[latestDate].updatedAt;
+
+    }
+
+
+    if (
+        !timestamp &&
+        data.lastUpdatedAt
+    ) {
+
+        timestamp =
+            data.lastUpdatedAt;
+
+    }
+
+
+    // IMPORTANT:
+    // This now controls:
+    //
+    // Updated 2 minutes ago
+    //
+    // 16 Aug 2026, 07:42:18 PM
+    //
+    updateLastSyncDisplay(
+        timestamp
+    );
+
+}
+
+
+// ============================================================
+// HISTORY TABLE
+// ============================================================
+
+function buildHistory(
+    data
+) {
 
     if (!historyBody) {
         return;
     }
 
 
-    const dates =
-        Object.keys(history)
-            .sort(
-                (a, b) =>
-                    b.localeCompare(a)
-            );
-
-
-    // ======================================
-    // NO HISTORY
-    // ======================================
-
-    if (dates.length === 0) {
-
-        historyBody.innerHTML = `
-            <tr>
-                <td
-                    colspan="5"
-                    class="empty-history"
-                >
-                    No daily updates yet.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    // ======================================
-    // BUILD TABLE
-    // ======================================
-
     historyBody.innerHTML = "";
 
 
+    const originalHistory =
+        data?.history || {};
+
+
+    const history = {
+        ...originalHistory
+    };
+
+
+    let dates =
+        getHistoryDates(
+            history
+        ).reverse();
+
+
+    // --------------------------------------------------------
+    // FALLBACK
+    // --------------------------------------------------------
+
+    if (
+        dates.length === 0 &&
+        (
+            data.person1 !== undefined ||
+            data.person2 !== undefined ||
+            data.person3 !== undefined
+        )
+    ) {
+
+        const today =
+            getTodayDate();
+
+
+        dates = [today];
+
+
+        history[today] = {
+
+            person1:
+                Number(
+                    data.person1
+                ) || 0,
+
+            person2:
+                Number(
+                    data.person2
+                ) || 0,
+
+            person3:
+                Number(
+                    data.person3
+                ) || 0
+
+        };
+
+    }
+
+
+    if (!dates.length) {
+
+        const row =
+            document.createElement(
+                "tr"
+            );
+
+
+        row.innerHTML =
+            `<td colspan="4">No history available</td>`;
+
+
+        historyBody.appendChild(
+            row
+        );
+
+
+        return;
+
+    }
+
+
+    const chronologicalDates =
+        [...dates].sort();
+
+
     dates.forEach(
-        (dateKey) => {
-
-            const day =
-                history[dateKey] || {};
-
-
-            const pintu =
-                Number(day.person1 || 0);
-
-
-            const akshay =
-                Number(day.person2 || 0);
-
-
-            const raju =
-                Number(day.person3 || 0);
-
-
-            const dailyTotal =
-                pintu +
-                akshay +
-                raju;
-
+        date => {
 
             const row =
-                document.createElement("tr");
+                document.createElement(
+                    "tr"
+                );
 
 
-            row.innerHTML = `
-
-                <td>
-                    ${formatDate(dateKey)}
-                </td>
-
-                <td>
-                    +${formatNumber(pintu)}
-                </td>
-
-                <td>
-                    +${formatNumber(akshay)}
-                </td>
-
-                <td>
-                    +${formatNumber(raju)}
-                </td>
-
-                <td>
-                    ${formatNumber(dailyTotal)}
-                </td>
-
-            `;
+            const dateCell =
+                document.createElement(
+                    "td"
+                );
 
 
-            historyBody.appendChild(row);
+            dateCell.textContent =
+                formatDate(
+                    date
+                );
+
+
+            row.appendChild(
+                dateCell
+            );
+
+
+            createHistoryCell(
+                row,
+                history,
+                chronologicalDates,
+                date,
+                "person1"
+            );
+
+
+            createHistoryCell(
+                row,
+                history,
+                chronologicalDates,
+                date,
+                "person2"
+            );
+
+
+            createHistoryCell(
+                row,
+                history,
+                chronologicalDates,
+                date,
+                "person3"
+            );
+
+
+            historyBody.appendChild(
+                row
+            );
 
         }
     );
@@ -509,191 +1857,278 @@ function buildHistory(history) {
 }
 
 
-// ==========================================
-// BUILD CHART
-// ==========================================
+// ============================================================
+// HISTORY CELL
+// ============================================================
 
-function buildChart(history) {
+function createHistoryCell(
+    row,
+    history,
+    dates,
+    date,
+    person
+) {
 
-    const canvas =
-        document.getElementById(
-            "progressChart"
+    const cell =
+        document.createElement(
+            "td"
         );
 
 
-    if (!canvas) {
+    const record =
+        history[date] || {};
+
+
+    const holding =
+        Number(
+            record[person]
+        ) || 0;
+
+
+    const value =
+        document.createElement(
+            "div"
+        );
+
+
+    value.className =
+        "history-value";
+
+
+    value.textContent =
+        formatCurrency(
+            holding
+        );
+
+
+    cell.appendChild(
+        value
+    );
+
+
+    const currentIndex =
+        dates.indexOf(
+            date
+        );
+
+
+    // --------------------------------------------------------
+    // FIRST DAY = HOLDING ONLY
+    // --------------------------------------------------------
+
+    if (currentIndex === 0) {
+
+        row.appendChild(
+            cell
+        );
+
+        return;
+
+    }
+
+
+    const previousDate =
+        dates[
+            currentIndex - 1
+        ];
+
+
+    const previousRecord =
+        history[
+            previousDate
+        ] || {};
+
+
+    const previousHolding =
+        Number(
+            previousRecord[person]
+        ) || 0;
+
+
+    const change =
+        holding -
+        previousHolding;
+
+
+    const changeElement =
+        document.createElement(
+            "div"
+        );
+
+
+    changeElement.className =
+        "history-change";
+
+
+    if (change > 0) {
+
+        changeElement.textContent =
+            `+${formatCurrency(change)}`;
+
+        changeElement.classList.add(
+            "positive",
+            "change-positive"
+        );
+
+    }
+    else if (change < 0) {
+
+        changeElement.textContent =
+            formatCurrency(change);
+
+        changeElement.classList.add(
+            "negative",
+            "change-negative"
+        );
+
+    }
+    else {
+
+        changeElement.textContent =
+            "₹0.00";
+
+    }
+
+
+    cell.appendChild(
+        changeElement
+    );
+
+
+    row.appendChild(
+        cell
+    );
+
+}
+
+
+// ============================================================
+// CHART
+// ============================================================
+
+function buildChart(
+    data
+) {
+
+    if (!chartCanvas) {
         return;
     }
 
 
-    // ======================================
-    // GET HISTORY DATES
-    // ======================================
+    const history =
+        data?.history || {};
+
 
     const dates =
-        Object.keys(history)
-            .sort(
-                (a, b) =>
-                    a.localeCompare(b)
-            );
+        getHistoryDates(
+            history
+        );
 
 
-    // ======================================
-    // STARTING TOTALS
-    // ======================================
+    if (!dates.length) {
 
-    let pintuTotal =
-        startingTotals.person1;
+        if (growthChart) {
 
-    let akshayTotal =
-        startingTotals.person2;
+            growthChart.destroy();
 
-    let rajuTotal =
-        startingTotals.person3;
-
-
-    // ======================================
-    // CHART ARRAYS
-    // ======================================
-
-    const labels = [
-        "Starting Total"
-    ];
-
-
-    const pintuData = [
-        pintuTotal
-    ];
-
-
-    const akshayData = [
-        akshayTotal
-    ];
-
-
-    const rajuData = [
-        rajuTotal
-    ];
-
-
-    // ======================================
-    // ADD HISTORY
-    // ======================================
-
-    dates.forEach(
-        (dateKey) => {
-
-            const day =
-                history[dateKey] || {};
-
-
-            pintuTotal +=
-                Number(
-                    day.person1 || 0
-                );
-
-
-            akshayTotal +=
-                Number(
-                    day.person2 || 0
-                );
-
-
-            rajuTotal +=
-                Number(
-                    day.person3 || 0
-                );
-
-
-            labels.push(
-                formatDate(dateKey)
-            );
-
-
-            pintuData.push(
-                pintuTotal
-            );
-
-
-            akshayData.push(
-                akshayTotal
-            );
-
-
-            rajuData.push(
-                rajuTotal
-            );
+            growthChart = null;
 
         }
-    );
 
-
-    // ======================================
-    // DESTROY OLD CHART
-    // ======================================
-
-    if (progressChart) {
-
-        progressChart.destroy();
+        return;
 
     }
 
 
-    // ======================================
-    // CREATE CHART
-    // ======================================
+    const labels =
+        dates.map(
+            date =>
+                formatDate(
+                    date
+                )
+        );
 
-    progressChart =
+
+    const pintuData =
+        dates.map(
+            date =>
+                Number(
+                    history[date]?.person1
+                ) || 0
+        );
+
+
+    const akshayData =
+        dates.map(
+            date =>
+                Number(
+                    history[date]?.person2
+                ) || 0
+        );
+
+
+    const rajuData =
+        dates.map(
+            date =>
+                Number(
+                    history[date]?.person3
+                ) || 0
+        );
+
+
+    if (growthChart) {
+
+        growthChart.destroy();
+
+    }
+
+
+    const ctx =
+        chartCanvas.getContext(
+            "2d"
+        );
+
+
+    growthChart =
         new Chart(
-            canvas,
+            ctx,
             {
+
                 type: "line",
 
                 data: {
 
-                    labels: labels,
+                    labels,
 
                     datasets: [
 
                         {
                             label: "Pintu",
-
                             data: pintuData,
-
                             tension: 0.35,
-
                             borderWidth: 2,
-
-                            pointRadius: 4,
-
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
                             fill: false
                         },
 
                         {
                             label: "Akshay",
-
                             data: akshayData,
-
                             tension: 0.35,
-
                             borderWidth: 2,
-
-                            pointRadius: 4,
-
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
                             fill: false
                         },
 
                         {
                             label: "Raju",
-
                             data: rajuData,
-
                             tension: 0.35,
-
                             borderWidth: 2,
-
-                            pointRadius: 4,
-
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
                             fill: false
                         }
 
@@ -709,6 +2144,16 @@ function buildChart(history) {
                     maintainAspectRatio: false,
 
 
+                    animation: {
+
+                        duration: 1200,
+
+                        easing:
+                            "easeOutQuart"
+
+                    },
+
+
                     interaction: {
 
                         mode: "index",
@@ -722,13 +2167,15 @@ function buildChart(history) {
 
                         legend: {
 
-                            labels: {
+                            display: true,
 
-                                color: "#cbd1df",
+                            labels: {
 
                                 usePointStyle: true,
 
-                                padding: 20
+                                boxWidth: 7,
+
+                                padding: 18
 
                             }
 
@@ -737,15 +2184,27 @@ function buildChart(history) {
 
                         tooltip: {
 
+                            backgroundColor:
+                                "rgba(7,10,16,0.96)",
+
+                            borderColor:
+                                "rgba(255,255,255,0.08)",
+
+                            borderWidth: 1,
+
+                            padding: 12,
+
+
                             callbacks: {
 
                                 label:
-                                    function(context) {
+                                    function(
+                                        context
+                                    ) {
 
                                         return (
-                                            context.dataset.label +
-                                            ": " +
-                                            formatNumber(
+                                            `${context.dataset.label}: ` +
+                                            formatCurrency(
                                                 context.parsed.y
                                             )
                                         );
@@ -763,21 +2222,12 @@ function buildChart(history) {
 
                         x: {
 
-                            ticks: {
-
-                                color: "#858da1",
-
-                                maxRotation: 45,
-
-                                minRotation: 0
-
+                            grid: {
+                                display: false
                             },
 
-                            grid: {
-
-                                color:
-                                    "rgba(255,255,255,0.05)"
-
+                            ticks: {
+                                color: "#7d8796"
                             }
 
                         },
@@ -785,27 +2235,30 @@ function buildChart(history) {
 
                         y: {
 
-                            beginAtZero: false,
-
-                            ticks: {
-
-                                color: "#858da1",
-
-                                callback:
-                                    function(value) {
-
-                                        return formatNumber(
-                                            value
-                                        );
-
-                                    }
-
-                            },
-
                             grid: {
 
                                 color:
                                     "rgba(255,255,255,0.05)"
+
+                            },
+
+
+                            ticks: {
+
+                                color:
+                                    "#7d8796",
+
+
+                                callback:
+                                    function(
+                                        value
+                                    ) {
+
+                                        return formatCurrency(
+                                            value
+                                        );
+
+                                    }
 
                             }
 
@@ -821,586 +2274,762 @@ function buildChart(history) {
 }
 
 
-// ==========================================
-// LOGIN ELEMENTS
-// ==========================================
+// ============================================================
+// FIREBASE REALTIME LISTENER
+// ============================================================
 
-const emailInput =
-    document.getElementById(
-        "email"
-    );
+onValue(
+    investmentsRef,
 
+    snapshot => {
 
-const passwordInput =
-    document.getElementById(
-        "password"
-    );
+        const data =
+            snapshot.val();
 
 
-const loginButton =
-    document.getElementById(
-        "loginButton"
-    );
-
-
-const loginBox =
-    document.getElementById(
-        "loginBox"
-    );
-
-
-const updateBox =
-    document.getElementById(
-        "updateBox"
-    );
-
-
-const loginError =
-    document.getElementById(
-        "loginError"
-    );
-
-
-const logoutButton =
-    document.getElementById(
-        "logoutButton"
-    );
-
-
-// ==========================================
-// LOGIN
-// ==========================================
-
-loginButton.addEventListener(
-    "click",
-    async () => {
-
-        const email =
-            emailInput.value.trim();
-
-
-        const password =
-            passwordInput.value;
-
-
-        if (!email || !password) {
-
-            loginError.textContent =
-                "Please enter email and password.";
-
+        if (!data) {
             return;
-
         }
 
 
-        loginError.textContent =
-            "";
+        currentData =
+            data;
 
 
-        loginButton.disabled =
-            true;
-
-
-        loginButton.textContent =
-            "Logging in...";
-
-
-        try {
-
-            await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Login error:",
-                error
-            );
-
-
-            loginError.textContent =
-                "Invalid email or password.";
-
-        } finally {
-
-            loginButton.disabled =
-                false;
-
-
-            loginButton.textContent =
-                "Login";
-
-        }
-
-    }
-);
-
-
-// ==========================================
-// ENTER KEY LOGIN
-// ==========================================
-
-passwordInput.addEventListener(
-    "keydown",
-    (event) => {
-
-        if (event.key === "Enter") {
-
-            loginButton.click();
-
-        }
-
-    }
-);
-
-
-// ==========================================
-// AUTH STATE
-// ==========================================
-
-onAuthStateChanged(
-    auth,
-    (user) => {
-
-        if (user) {
-
-            loginBox.style.display =
-                "none";
-
-
-            updateBox.style.display =
-                "block";
-
-        } else {
-
-            loginBox.style.display =
-                "grid";
-
-
-            updateBox.style.display =
-                "none";
-
-        }
-
-    }
-);
-
-
-// ==========================================
-// LOGOUT
-// ==========================================
-
-logoutButton.addEventListener(
-    "click",
-    async () => {
-
-        try {
-
-            await signOut(auth);
-
-        } catch (error) {
-
-            console.error(
-                "Logout error:",
-                error
-            );
-
-        }
-
-    }
-);
-
-
-// ==========================================
-// TODAY STATUS
-// ==========================================
-
-function updateAdminTodayStatus(data) {
-
-    const todayKey =
-        getIndiaDateKey();
-
-
-    const alreadyUpdated =
-        Boolean(
-            data &&
-            data.history &&
-            data.history[todayKey]
+        updateMainDisplay(
+            data
         );
 
 
-    const message =
-        document.getElementById(
-            "alreadyUpdated"
+        buildHistory(
+            data
         );
 
 
-    const updateButton =
-        document.getElementById(
-            "updateButton"
+        buildChart(
+            data
         );
 
 
-    if (!message || !updateButton) {
-        return;
-    }
+        updateAdminTodayStatus(
+            data
+        );
+
+    },
 
 
-    if (alreadyUpdated) {
+    error => {
 
-        message.style.display =
-            "block";
-
-
-        updateButton.disabled =
-            true;
-
-
-        updateButton.textContent =
-            "Today's Numbers Already Added";
-
-    } else {
-
-        message.style.display =
-            "none";
-
-
-        updateButton.disabled =
-            false;
-
-
-        updateButton.textContent =
-            "➕ Add Today's Numbers";
+        console.error(
+            "Firebase error:",
+            error
+        );
 
     }
-
-}
-
-
-// ==========================================
-// UPDATE NUMBERS
-// ==========================================
-
-const updateButton =
-    document.getElementById(
-        "updateButton"
-    );
+);
 
 
-const status =
-    document.getElementById(
-        "status"
-    );
+// ============================================================
+// LOGIN
+// ============================================================
+
+if (loginButton) {
+
+    loginButton.addEventListener(
+        "click",
+
+        async () => {
+
+            const email =
+                emailInput?.value.trim();
+
+            const password =
+                passwordInput?.value;
 
 
-// ==========================================
-// UPDATE BUTTON
-// ==========================================
+            if (
+                !email ||
+                !password
+            ) {
 
-updateButton.addEventListener(
-    "click",
-    async () => {
+                if (loginMessage) {
 
-        status.textContent =
-            "";
-
-
-        updateButton.disabled =
-            true;
-
-
-        updateButton.textContent =
-            "Updating...";
-
-
-        // ==================================
-        // GET INPUT VALUES
-        // ==================================
-
-        const values =
-            people.map(
-                (person) => {
-
-                    const input =
-                        document.getElementById(
-                            person.inputId
-                        );
-
-
-                    return Number(
-                        input.value
-                    );
+                    loginMessage.textContent =
+                        "Please enter email and password.";
 
                 }
-            );
-
-
-        // ==================================
-        // VALIDATION
-        // ==================================
-
-        const valid =
-            values.every(
-                (value) =>
-                    Number.isFinite(value) &&
-                    value >= 0
-            );
-
-
-        if (!valid) {
-
-            status.textContent =
-                "Please enter valid numbers.";
-
-
-            updateButton.disabled =
-                false;
-
-
-            updateButton.textContent =
-                "➕ Add Today's Numbers";
-
-
-            return;
-
-        }
-
-
-        // ==================================
-        // AT LEAST ONE NUMBER
-        // ==================================
-
-        const totalAdded =
-            values[0] +
-            values[1] +
-            values[2];
-
-
-        if (totalAdded <= 0) {
-
-            status.textContent =
-                "Enter at least one number.";
-
-
-            updateButton.disabled =
-                false;
-
-
-            updateButton.textContent =
-                "➕ Add Today's Numbers";
-
-
-            return;
-
-        }
-
-
-        // ==================================
-        // TODAY
-        // ==================================
-
-        const todayKey =
-            getIndiaDateKey();
-
-
-        try {
-
-            // ==================================
-            // ATOMIC DATABASE UPDATE
-            // ==================================
-
-            const result =
-                await runTransaction(
-                    numbersRef,
-                    (currentData) => {
-
-                        // ----------------------
-                        // NEW DATABASE
-                        // ----------------------
-
-                        if (!currentData) {
-
-                            currentData = {};
-
-                        }
-
-
-                        // ----------------------
-                        // DUPLICATE PROTECTION
-                        // ----------------------
-
-                        if (
-                            currentData.history &&
-                            currentData.history[todayKey]
-                        ) {
-
-                            return;
-
-                        }
-
-
-                        // ----------------------
-                        // EXISTING TOTALS
-                        // ----------------------
-                        //
-                        // IMPORTANT:
-                        // If Firebase is empty,
-                        // start from your original
-                        // totals instead of 0.
-                        //
-
-                        const current1 =
-                            currentData.person1 !== undefined
-                                ? Number(currentData.person1)
-                                : startingTotals.person1;
-
-
-                        const current2 =
-                            currentData.person2 !== undefined
-                                ? Number(currentData.person2)
-                                : startingTotals.person2;
-
-
-                        const current3 =
-                            currentData.person3 !== undefined
-                                ? Number(currentData.person3)
-                                : startingTotals.person3;
-
-
-                        // ----------------------
-                        // ADD TODAY'S NUMBERS
-                        // ----------------------
-
-                        currentData.person1 =
-                            current1 + values[0];
-
-
-                        currentData.person2 =
-                            current2 + values[1];
-
-
-                        currentData.person3 =
-                            current3 + values[2];
-
-
-                        // ----------------------
-                        // HISTORY
-                        // ----------------------
-
-                        if (!currentData.history) {
-
-                            currentData.history = {};
-
-                        }
-
-
-                        currentData.history[todayKey] = {
-
-                            person1:
-                                values[0],
-
-                            person2:
-                                values[1],
-
-                            person3:
-                                values[2],
-
-                            updatedAt:
-                                new Date().toISOString()
-
-                        };
-
-
-                        // ----------------------
-                        // LAST UPDATED
-                        // ----------------------
-
-                        currentData.lastUpdated =
-                            todayKey;
-
-
-                        return currentData;
-
-                    }
-                );
-
-
-            // ==================================
-            // TRANSACTION NOT COMMITTED
-            // ==================================
-
-            if (!result.committed) {
-
-                status.textContent =
-                    "⚠️ Today's numbers were already added.";
-
-
-                updateButton.disabled =
-                    true;
-
-
-                updateButton.textContent =
-                    "Today's Numbers Already Added";
-
 
                 return;
 
             }
 
 
-            // ==================================
-            // SUCCESS
-            // ==================================
+            if (loginMessage) {
 
-            status.textContent =
-                "✅ Today's numbers added successfully!";
+                loginMessage.textContent =
+                    "Signing in...";
 
-
-            // Clear inputs
-
-            people.forEach(
-                (person) => {
-
-                    const input =
-                        document.getElementById(
-                            person.inputId
-                        );
+            }
 
 
-                    if (input) {
+            try {
 
-                        input.value =
-                            "";
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+
+                if (loginMessage) {
+
+                    loginMessage.textContent =
+                        "Login successful.";
+
+                }
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Login error:",
+                    error
+                );
+
+
+                if (loginMessage) {
+
+                    loginMessage.textContent =
+                        "Invalid email or password.";
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// AUTH STATE
+// ============================================================
+
+onAuthStateChanged(
+    auth,
+
+    user => {
+
+        if (user) {
+
+            if (loginSection) {
+
+                loginSection.classList.add(
+                    "hidden"
+                );
+
+            }
+
+
+            if (adminPanel) {
+
+                adminPanel.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+        }
+        else {
+
+            if (loginSection) {
+
+                loginSection.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+
+            if (adminPanel) {
+
+                adminPanel.classList.add(
+                    "hidden"
+                );
+
+            }
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// LOGOUT
+// ============================================================
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+        "click",
+
+        async () => {
+
+            try {
+
+                await signOut(
+                    auth
+                );
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// INPUT VALIDATION
+// ============================================================
+
+function validateInput(
+    input,
+    name
+) {
+
+    if (!input) {
+
+        return {
+
+            valid: false,
+
+            message:
+                `${name} input not found.`
+
+        };
+
+    }
+
+
+    if (
+        input.value.trim() === ""
+    ) {
+
+        return {
+
+            valid: false,
+
+            message:
+                `Please enter ${name}'s current holding.`
+
+        };
+
+    }
+
+
+    const value =
+        Number(
+            input.value
+        );
+
+
+    if (
+        !Number.isFinite(value) ||
+        value < 0
+    ) {
+
+        return {
+
+            valid: false,
+
+            message:
+                `Please enter a valid value for ${name}.`
+
+        };
+
+    }
+
+
+    return {
+
+        valid: true,
+
+        value
+
+    };
+
+}
+
+
+// ============================================================
+// UPDATE TODAY
+// ============================================================
+
+async function updateToday() {
+
+    if (!auth.currentUser) {
+
+        if (updateMessage) {
+
+            updateMessage.textContent =
+                "Please login first.";
+
+        }
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // VALIDATE INPUTS
+    // --------------------------------------------------------
+
+    const pintu =
+        validateInput(
+            pintuInput,
+            "Pintu"
+        );
+
+
+    const akshay =
+        validateInput(
+            akshayInput,
+            "Akshay"
+        );
+
+
+    const raju =
+        validateInput(
+            rajuInput,
+            "Raju"
+        );
+
+
+    if (!pintu.valid) {
+
+        if (updateMessage) {
+
+            updateMessage.textContent =
+                pintu.message;
+
+        }
+
+        return;
+
+    }
+
+
+    if (!akshay.valid) {
+
+        if (updateMessage) {
+
+            updateMessage.textContent =
+                akshay.message;
+
+        }
+
+        return;
+
+    }
+
+
+    if (!raju.valid) {
+
+        if (updateMessage) {
+
+            updateMessage.textContent =
+                raju.message;
+
+        }
+
+        return;
+
+    }
+
+
+    const today =
+        getTodayDate();
+
+
+    if (updateMessage) {
+
+        updateMessage.textContent =
+            "Updating portfolio...";
+
+    }
+
+
+    if (updateButton) {
+
+        updateButton.disabled =
+            true;
+
+    }
+
+
+    try {
+
+        const result =
+            await runTransaction(
+                investmentsRef,
+
+                current => {
+
+                    if (!current) {
+
+                        current = {};
 
                     }
+
+
+                    if (!current.history) {
+
+                        current.history = {};
+
+                    }
+
+
+                    // ------------------------------------------------
+                    // PREVENT DUPLICATE UPDATE
+                    // ------------------------------------------------
+
+                    if (
+                        current.history[today]
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const timestamp =
+                        Date.now();
+
+
+                    // ------------------------------------------------
+                    // CURRENT HOLDINGS
+                    //
+                    // These values already INCLUDE
+                    // the ₹1,00,000 principal.
+                    // ------------------------------------------------
+
+                    current.person1 =
+                        pintu.value;
+
+                    current.person2 =
+                        akshay.value;
+
+                    current.person3 =
+                        raju.value;
+
+
+                    // ------------------------------------------------
+                    // HISTORY
+                    // ------------------------------------------------
+
+                    current.history[today] = {
+
+                        person1:
+                            pintu.value,
+
+                        person2:
+                            akshay.value,
+
+                        person3:
+                            raju.value,
+
+                        updatedAt:
+                            timestamp
+
+                    };
+
+
+                    // ------------------------------------------------
+                    // LAST UPDATED
+                    // ------------------------------------------------
+
+                    current.lastUpdated =
+                        today;
+
+                    current.lastUpdatedAt =
+                        timestamp;
+
+
+                    return current;
 
                 }
             );
 
 
-        } catch (error) {
+        // --------------------------------------------------------
+        // TRANSACTION FAILED / ALREADY UPDATED
+        // --------------------------------------------------------
 
-            console.error(
-                "Update error:",
-                error
+        if (!result.committed) {
+
+            if (updateMessage) {
+
+                updateMessage.textContent =
+                    "Today's values have already been updated.";
+
+            }
+
+
+            // Refresh status using latest transaction snapshot
+            if (result.snapshot) {
+
+                currentData =
+                    result.snapshot.val();
+
+                updateAdminTodayStatus(
+                    currentData
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------------
+        // IMPORTANT FIX
+        //
+        // Use the newly committed Firebase snapshot immediately.
+        // --------------------------------------------------------
+
+        if (result.snapshot) {
+
+            currentData =
+                result.snapshot.val();
+
+        }
+
+
+        if (updateMessage) {
+
+            updateMessage.textContent =
+                "✓ Today's portfolio values updated successfully.";
+
+        }
+
+
+        // --------------------------------------------------------
+        // CLEAR INPUTS
+        // --------------------------------------------------------
+
+        if (pintuInput) {
+
+            pintuInput.value =
+                "";
+
+        }
+
+
+        if (akshayInput) {
+
+            akshayInput.value =
+                "";
+
+        }
+
+
+        if (rajuInput) {
+
+            rajuInput.value =
+                "";
+
+        }
+
+
+        // --------------------------------------------------------
+        // UPDATE ADMIN STATUS IMMEDIATELY
+        // --------------------------------------------------------
+
+        updateAdminTodayStatus(
+            currentData
+        );
+
+
+        // --------------------------------------------------------
+        // UPDATE LAST SYNC IMMEDIATELY
+        // --------------------------------------------------------
+
+        if (
+            currentData &&
+            currentData.lastUpdatedAt
+        ) {
+
+            updateLastSyncDisplay(
+                currentData.lastUpdatedAt
             );
-
-
-            status.textContent =
-                "❌ Update failed. Please try again.";
-
-
-            updateButton.disabled =
-                false;
-
-
-            updateButton.textContent =
-                "➕ Add Today's Numbers";
 
         }
 
     }
+    catch (error) {
+
+        console.error(
+            "Update error:",
+            error
+        );
+
+
+        if (updateMessage) {
+
+            updateMessage.textContent =
+                "Update failed. Please try again.";
+
+        }
+
+
+        // Re-check current Firebase data
+        if (currentData) {
+
+            updateAdminTodayStatus(
+                currentData
+            );
+
+        }
+
+    }
+    finally {
+
+        // Do not blindly enable the button.
+        // Firebase data decides whether today is already updated.
+
+        if (currentData) {
+
+            updateAdminTodayStatus(
+                currentData
+            );
+
+        }
+
+    }
+
+}
+
+
+// ============================================================
+// UPDATE BUTTON
+// ============================================================
+
+if (updateButton) {
+
+    updateButton.addEventListener(
+        "click",
+        updateToday
+    );
+
+}
+
+
+// ============================================================
+// ADMIN TODAY STATUS
+// ============================================================
+
+function updateAdminTodayStatus(
+    data
+) {
+
+    if (!data) {
+        return;
+    }
+
+
+    const today =
+        getTodayDate();
+
+
+    const alreadyUpdated =
+        Boolean(
+            data.history &&
+            data.history[today]
+        );
+
+
+    if (updateButton) {
+
+        updateButton.disabled =
+            alreadyUpdated;
+
+    }
+
+
+    const alreadyUpdatedElement =
+        document.getElementById(
+            "alreadyUpdated"
+        );
+
+
+    if (alreadyUpdatedElement) {
+
+        if (alreadyUpdated) {
+
+            alreadyUpdatedElement.classList.remove(
+                "hidden"
+            );
+
+
+            alreadyUpdatedElement.textContent =
+                "Today's values have already been updated.";
+
+        }
+        else {
+
+            alreadyUpdatedElement.classList.add(
+                "hidden"
+            );
+
+        }
+
+    }
+
+}
+
+
+// ============================================================
+// ENTER KEY LOGIN
+// ============================================================
+
+if (passwordInput) {
+
+    passwordInput.addEventListener(
+        "keydown",
+
+        event => {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                loginButton?.click();
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// START
+// ============================================================
+
+console.log(
+    "Investment dashboard loaded successfully."
 );
